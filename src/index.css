@@ -70,6 +70,10 @@ code {
   background: #fafafa;
   border-radius: 8px;
   overflow-x: auto;
+  overflow-y: hidden;
+  min-height: 200px;
+  padding-top: 32px;
+  padding-bottom: 64px;
 }
 
 .workflow-step {
@@ -139,27 +143,35 @@ code {
 }
 
 .progress-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 24px;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: clamp(8px, 2vw, 24px);
   margin-top: 16px;
+  overflow: hidden;
 }
 
 .progress-item {
   text-align: center;
+  flex: 1 1 0;
+  min-width: 0; /* allow shrinking to avoid horizontal scroll */
 }
 
 .progress-number {
-  font-size: 24px;
+  font-size: clamp(14px, 1.8vw, 20px);
   font-weight: 600;
   color: #1890ff;
   margin-bottom: 8px;
 }
 
 .progress-label {
-  font-size: 14px;
+  font-size: clamp(12px, 1.6vw, 14px);
   color: #666;
   margin-bottom: 8px;
+}
+
+.progress-section .ant-progress {
+  width: clamp(100px, 60%, 70%);
+  margin: 0 auto;
 }
 
 .progress-bar {
@@ -180,6 +192,7 @@ code {
   grid-template-columns: 1fr 1fr;
   gap: 24px;
   margin-top: 24px;
+  align-items: start;
 }
 
 .content-panel {
@@ -206,14 +219,20 @@ code {
   border-bottom: none;
 }
 
-.activity-icon {
-  margin-right: 12px;
-  color: #1890ff;
+.activity-icon { display: none; }
+
+.activity-content { display: none; }
+.activity-line {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.activity-content {
-  flex: 1;
-}
+.activity-line .time,
+.activity-line .user,
+.activity-line .action { margin-right: 2ch; }
+
 
 .activity-action {
   font-weight: 500;
@@ -254,55 +273,131 @@ code {
   color: #8c8c8c;
 }
 
+/* Team lines display */
+.team-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* space between lines */
+  height: 100%;
+  justify-content: space-between; /* match dynamic list height distribution */
+}
+
+.team-line {
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.team-role {
+  font-weight: 600;
+  margin-right: 6px;
+  font-size: 15px;
+}
+
+.team-members {
+  color: #595959;
+  font-size: 15px;
+}
+
 /* Horizontal workflow styles */
 .workflow-horizontal {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  align-items: center;
+  gap: 0;
+  padding: 12px 0 64px;
 }
 
 .workflow-item {
   display: flex;
   align-items: center;
+  flex: 1 1 0;
+}
+
+.workflow-item:last-child {
+  flex: 0 0 auto;
 }
 
 .workflow-node-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  height: 28px; /* match .workflow-node.small diameter */
+  justify-content: center;
+}
+
+.workflow-node-text {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 2;
 }
 
 .workflow-node.small {
   width: 28px;
   height: 28px;
   font-size: 12px;
+  margin-right: 0;
+}
+
+.workflow-node-text {
+  margin-top: 8px;
+  text-align: center;
+}
+
+.workflow-name {
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+}
+
+.workflow-time {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.workflow-time-date {
+  white-space: nowrap;
+}
+
+.workflow-time-clock {
+  white-space: nowrap;
 }
 
 .workflow-segment {
-  display: flex;
-  align-items: center;
+  position: relative;
+  flex: 1 1 0;
+  height: 2px;
   margin: 0 8px;
 }
 
 .workflow-line-horizontal {
-  width: 120px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   height: 2px;
   background: #d9d9d9;
-  position: relative;
 }
 
 .workflow-milestones {
-  position: relative;
+  position: absolute;
+  left: 16px; /* keep a small gap from the left node */
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
-  margin-left: -120px;
-  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .workflow-milestone {
-  background: rgba(255, 255, 255, 0.95);
+  background: transparent;
   padding: 2px 6px;
   font-size: 12px;
   color: #666;

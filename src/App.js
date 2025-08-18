@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { Layout } from 'antd';
 import ProjectList from './components/ProjectList';
 import ProjectDetail from './components/ProjectDetail';
@@ -11,7 +11,9 @@ function App() {
   return (
     <Layout>
       <Header>
-        <h1 style={{ color: 'white', margin: 0 }}>DevOps一体化平台</h1>
+        <h1 style={{ margin: 0 }}>
+          <Link to="/" style={{ color: 'white', textDecoration: 'none', cursor: 'pointer' }}>Mobius</Link>
+        </h1>
       </Header>
       <Content>
         <Routes>

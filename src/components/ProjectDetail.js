@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Tabs, 
@@ -68,17 +69,24 @@ const ProjectDetail = () => {
       { type: '设计', time: '2024-01-20 14:30', user: '李四', action: '完成了系统设计文档' },
       { type: '开发', time: '2024-01-25 16:00', user: '王五', action: '开始前端开发' },
       { type: '开发', time: '2024-02-01 10:00', user: '赵六', action: '完成后端API开发' },
-      { type: '测试', time: '2024-02-10 14:00', user: '钱七', action: '开始单元测试' }
+      { type: '测试', time: '2024-02-10 14:00', user: '钱七', action: '开始单元测试' },
+      { type: '开发', time: '2024-02-12 11:20', user: '王五', action: '集成了用户鉴权模块' },
+      { type: '评审', time: '2024-02-13 15:45', user: '李四', action: '完成代码评审并给出修改意见' },
+      { type: '测试', time: '2024-02-14 09:30', user: '钱七', action: '提交第一轮冒烟测试报告' },
+      { type: '开发', time: '2024-02-15 18:05', user: '赵六', action: '根据评审意见修复若干问题' },
+      { type: '测试', time: '2024-02-16 13:22', user: '钱七', action: '新增接口自动化用例' },
+      { type: '预发布', time: '2024-02-18 10:10', user: '周九', action: '预发环境完成部署' },
+      { type: '运维', time: '2024-02-19 17:40', user: '孙八', action: '完成资源扩容与监控配置' }
     ],
     team: [
-      { role: '产品负责人', name: '张三', avatar: '张' },
-      { role: '开发负责人', name: '李四', avatar: '李' },
-      { role: 'PM', name: '王五', avatar: '王' },
-      { role: '开发', name: '赵六', avatar: '赵' },
-      { role: '测试', name: '钱七', avatar: '钱' },
-      { role: '运维', name: '孙八', avatar: '孙' },
-      { role: '预发布验证', name: '周九', avatar: '周' },
-      { role: '生产验证', name: '吴十', avatar: '吴' }
+      { role: '产品负责人', name: '张三', avatar: '张', empId: '10001' },
+      { role: '开发负责人', name: '李四', avatar: '李', empId: '10002' },
+      { role: 'PM', name: '王五', avatar: '王', empId: '10003' },
+      { role: '开发', name: '赵六', avatar: '赵', empId: '10004' },
+      { role: '测试', name: '钱七', avatar: '钱', empId: '10005' },
+      { role: '运维', name: '孙八', avatar: '孙', empId: '10006' },
+      { role: '预发布验证', name: '周九', avatar: '周', empId: '10007' },
+      { role: '生产验证', name: '吴十', avatar: '吴', empId: '10008' }
     ]
   };
 
@@ -103,6 +111,24 @@ const ProjectDetail = () => {
   };
 
   const renderWorkflow = () => {
+    const normalizeDateTime = (value) => {
+      if (!value) return null;
+      const trimmed = String(value).trim();
+      const hasMinutesOnly = /^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}$/.test(trimmed);
+      const candidate = hasMinutesOnly ? `${trimmed}:00` : trimmed;
+      const parsed = dayjs(candidate);
+      return parsed.isValid() ? parsed : null;
+    };
+
+    const formatDate = (value) => {
+      const d = normalizeDateTime(value);
+      return d ? d.format('YYYY-MM-DD') : '';
+    };
+
+    const formatClock = (value) => {
+      const d = normalizeDateTime(value);
+      return d ? d.format('HH:mm:ss') : '';
+    };
     const getSegmentMilestones = (fromStep) => {
       switch (fromStep) {
         case 1:
@@ -139,9 +165,15 @@ const ProjectDetail = () => {
                 <div className="workflow-node-text">
                   <div className="workflow-name">{step.name}</div>
                   <div className="workflow-time">
-                    {step.status === 'completed' || step.status === 'current'
-                      ? step.time
-                      : '待开始'}
+                    {(step.status === 'completed' || step.status === 'current') && step.time
+                      ? (
+                        <>
+                          <div className="workflow-time-date">{formatDate(step.time)}</div>
+                          <div className="workflow-time-clock">{formatClock(step.time)}</div>
+                        </>
+                      ) : (
+                        '待开始'
+                      )}
                   </div>
                 </div>
               </div>
@@ -251,43 +283,35 @@ const ProjectDetail = () => {
 
         {/* 动态和团队 */}
         <div className="content-split">
-          <div className="content-panel">
+          <div className="content-panel" style={{display:'flex',flexDirection:'column',height:'100%'}}>
             <div className="panel-title">动态</div>
             <List
               dataSource={projectData.activities}
+              pagination={{ pageSize: 7, showSizeChanger: false }}
               renderItem={(item) => (
                 <div className="activity-item">
-                  <div className="activity-icon">
-                    {item.type === '创建' && <CheckCircleOutlined />}
-                    {item.type === '设计' && <EditOutlined />}
-                    {item.type === '开发' && <PlayCircleOutlined />}
-                    {item.type === '测试' && <ExclamationCircleOutlined />}
-                  </div>
-                  <div className="activity-content">
-                    <div className="activity-action">{item.user} {item.action}</div>
-                    <div className="activity-time">{item.time}</div>
+                  <div className="activity-line">
+                    <span className="time">{item.time}</span>
+                    <span className="user">{item.user}</span>
+                    <span className="action">{item.action}</span>
                   </div>
                 </div>
               )}
             />
           </div>
 
-          <div className="content-panel">
+          <div className="content-panel" style={{display:'flex',flexDirection:'column',height:'100%'}}>
             <div className="panel-title">团队</div>
-            <List
-              dataSource={projectData.team}
-              renderItem={(item) => (
-                <div className="team-member">
-                  <Avatar style={{ backgroundColor: '#1890ff' }} className="member-avatar">
-                    {item.avatar}
-                  </Avatar>
-                  <div className="member-info">
-                    <div className="member-name">{item.name}</div>
-                    <div className="member-role">{item.role}</div>
-                  </div>
+            <div className="team-lines">
+              {[...new Map(projectData.team.map(m => [m.role, projectData.team.filter(x => x.role === m.role)]))].map(([role, members]) => (
+                <div key={role} className="team-line">
+                  <span className="team-role">{role}:</span>
+                  <span className="team-members">
+                    {members.map((m, idx) => `${m.name}_${m.empId}`).join(', ')}
+                  </span>
                 </div>
-              )}
-            />
+              ))}
+            </div>
           </div>
         </div>
       </div>
