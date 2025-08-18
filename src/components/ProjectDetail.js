@@ -130,16 +130,19 @@ const ProjectDetail = () => {
       return d ? d.format('HH:mm:ss') : '';
     };
     const getSegmentMilestones = (fromStep) => {
+      // 将每段里程碑整体顺移到下一段
       switch (fromStep) {
         case 1:
-          return ['1. 设计评审'];
+          return [];
         case 2:
-          return ['1. 代码扫描', '2. 提测', '3. 冒烟测试', '4. 代码评审', '5. 单元测试'];
+          return ['1. 设计评审'];
         case 3:
-          return ['1. 测试完成', '2. 产品验收'];
+          return ['1. 代码扫描', '2. 提测', '3. 冒烟测试', '4. 代码评审', '5. 单元测试'];
         case 4:
-          return ['1. 预发验证'];
+          return ['1. 测试完成', '2. 产品验收'];
         case 5:
+          return ['1. 预发验证'];
+        case 6:
           return ['1. 生产验证'];
         default:
           return [];
