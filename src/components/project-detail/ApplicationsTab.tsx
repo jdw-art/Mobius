@@ -104,42 +104,49 @@ const ApplicationsTab: React.FC = () => {
       dataIndex: 'name',
       key: 'name',
       width: 150,
+      align: 'center',
     },
     {
       title: '分支名',
       dataIndex: 'branch',
       key: 'branch',
       width: 150,
+      align: 'center',
     },
     {
       title: '版本号',
       dataIndex: 'version',
       key: 'version',
       width: 100,
+      align: 'center',
     },
     {
       title: '测试状态',
       dataIndex: 'testStatus',
       key: 'testStatus',
       width: 80,
+      align: 'center',
     },
     {
       title: '部署方式',
       dataIndex: 'deployMethod',
       key: 'deployMethod',
       width: 100,
+      align: 'center',
     },
-    {      title: '单元测试',      dataIndex: 'unitTest',      key: 'unitTest',      width: 80,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,    },    {      title: '代码扫描',      dataIndex: 'codeScan',      key: 'codeScan',      width: 80,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,    },    {      title: '代码评审',      dataIndex: 'codeReview',      key: 'codeReview',      width: 100,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,    },
+    {      title: '单元测试',      dataIndex: 'unitTest',      key: 'unitTest',      width: 80,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,      align: 'center',    },    {      title: '代码扫描',      dataIndex: 'codeScan',      key: 'codeScan',      width: 80,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,      align: 'center',    },    {      title: '代码评审',      dataIndex: 'codeReview',      key: 'codeReview',      width: 100,      render: (text) => <span style={{ color: '#1890ff' }}>{text}</span>,      align: 'center',    },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       width: 80,
+      align: 'center',
     },
     {
       title: '操作',
       key: 'action',
       width: 100,
+      align: 'center',
       render: (_, record) => (
         <Space direction="vertical" size="middle">
           <Button 

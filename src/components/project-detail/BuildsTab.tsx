@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Select, Input, Button, Table, Space, Progress, Tag } from 'antd';
+import { Tabs, Select, Input, Button, Table, Space, Progress, Tag, List } from 'antd';
 import type { TabsProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { ArrowRightOutlined, PlayCircleOutlined } from '@ant-design/icons';
@@ -21,6 +21,11 @@ const BuildsTab: React.FC = () => {
   const [unbuiltProjects] = useState<UnbuiltProject[]>(getMockUnbuiltProjects());
   const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
   const [selectedAppId, setSelectedAppId] = useState<string>('APP001');
+  // 分页配置 - 与概况动态部分保持一致
+  const paginationConfig = {
+    pageSize: 10, // 每页10条数据
+    showSizeChanger: false
+  };
 
   // 处理标签页切换
   const handleTabChange = (key: string) => {
@@ -82,34 +87,39 @@ const BuildsTab: React.FC = () => {
       dataIndex: 'branch',
       key: 'branch',
       width: 150,
+      align: 'center',
     },
     {
       title: '所属项目',
       dataIndex: 'projectName',
       key: 'projectName',
       width: 150,
+      align: 'center',
     },
     {
       title: '所属项目编号',
       dataIndex: 'projectId',
       key: 'projectId',
       width: 120,
+      align: 'center',
     },
     {
       title: '测试人员',
       dataIndex: 'tester',
       key: 'tester',
       width: 100,
+      align: 'center',
     },
     {
       title: '增量覆盖率',
       key: 'coverage',
       width: 120,
+      align: 'center',
       render: (_, record) => (
         <Space size="middle">
           <span>{record.coverage}%</span>
           {record.canUpdateCoverage && (
-            <Button size="small" type="link" onClick={() => handleUpdateCoverage(record.id)}>
+            <Button size="small" type="link" style={{ fontSize: '12px' }} onClick={() => handleUpdateCoverage(record.id)}>
               更新
             </Button>
           )}
@@ -121,7 +131,7 @@ const BuildsTab: React.FC = () => {
       key: 'action',
       width: 80,
       render: (_, record) => (
-        <Button size="small" danger type="link" onClick={() => handleExitBuild(record.id)}>
+        <Button size="small" danger type="link" style={{ fontSize: '12px' }} onClick={() => handleExitBuild(record.id)}>
           退出构建
         </Button>
       ),
@@ -135,31 +145,36 @@ const BuildsTab: React.FC = () => {
       dataIndex: 'branch',
       key: 'branch',
       width: 150,
+      align: 'center',
     },
     {
       title: '所属项目',
       dataIndex: 'projectName',
       key: 'projectName',
       width: 150,
+      align: 'center',
     },
     {
       title: '所属项目编号',
       dataIndex: 'projectId',
       key: 'projectId',
       width: 120,
+      align: 'center',
     },
     {
       title: '测试人员',
       dataIndex: 'tester',
       key: 'tester',
       width: 100,
+      align: 'center',
     },
     {
       title: '操作',
       key: 'action',
       width: 80,
+      align: 'center',
       render: (_, record) => (
-        <Button size="small" type="link" onClick={() => handleEnterBuild(record.id)}>
+        <Button size="small" type="link" style={{ fontSize: '12px' }} onClick={() => handleEnterBuild(record.id)}>
           进入构建
         </Button>
       ),
@@ -213,7 +228,7 @@ const BuildsTab: React.FC = () => {
             {/* 第一行：应用名、版本号和空白占位 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>应用名：</span>
+                <span style={{ fontWeight: 600 }}>应用名：</span>
                 <Select
                   value={selectedAppId}
                   style={{ width: 200, marginLeft: '8px' }}
@@ -222,7 +237,7 @@ const BuildsTab: React.FC = () => {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <span>版本号：</span>
+                <span style={{ fontWeight: 600 }}>版本号：</span>
                 <span style={{ margin: '0 8px' }}>{buildConfig.oldVersion}</span>
                 <ArrowRightOutlined />
                 <span style={{ marginLeft: '8px' }}>{buildConfig.newVersion}</span>
@@ -233,23 +248,31 @@ const BuildsTab: React.FC = () => {
             {/* 第二行：安装包名、构建方式、部署方式 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>安装包名：</span>
+                <span style={{ fontWeight: 600 }}>安装包名：</span>
                 <span>{buildConfig.packageName}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>构建方式：</span>
+                <span style={{ fontWeight: 600 }}>构建方式：</span>
                 <span>{buildConfig.buildMethod}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>部署方式：</span>
+                <span style={{ fontWeight: 600 }}>部署方式：</span>
                 <span>{buildConfig.deployMethod}</span>
               </div>
             </div>
 
+            {/* 部署分支行 */}
+            <div style={{ display: 'flex', marginBottom: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: 600 }}>部署分支：</span>
+                <span>{buildConfig.branch || 'main'}</span>
+              </div>
+            </div>
+
             {/* 第三行：部署列表 */}
-            <div style={{ marginBottom: '16px' }}>
-              <span>部署列表：</span>
-              <div style={{ marginTop: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+              <span style={{ marginRight: '8px', fontWeight: 600 }}>部署列表：</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {buildConfig.servers.map((server: any, index: number) => (
                   <span key={index} style={{ marginRight: '16px' }}>
                     {renderServerStatus(server.ip, server.deployStatus)}
@@ -265,7 +288,7 @@ const BuildsTab: React.FC = () => {
 
             {/* 第五行：进度条和构建部署按钮 */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.buildProgress}
                   status={buildConfig.buildProgress === 100 ? 'success' : 'active'}
@@ -276,7 +299,7 @@ const BuildsTab: React.FC = () => {
               <div style={{ margin: '0 16px' }}>
                 {renderBuildStatus(buildConfig.buildStatus)}
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.deployProgress}
                   status={buildConfig.deployProgress === 100 ? 'success' : 'active'}
@@ -321,13 +344,17 @@ const BuildsTab: React.FC = () => {
           <div className="operation-logs">
             <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
             <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              {operationLogs.map((log, index) => (
-                <div key={index} style={{ marginBottom: '8px', whiteSpace: 'pre-line' }}>
-                  <span style={{ marginRight: '24px' }}>{log.time}</span>
-                  <span style={{ marginRight: '24px' }}>{log.user}</span>
-                  <span>{log.action}</span>
-                </div>
-              ))}
+              <List
+                dataSource={operationLogs}
+                pagination={paginationConfig}
+                renderItem={(log, index) => (
+                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
+                    <span style={{ marginRight: '24px' }}>{log.time}</span>
+                    <span style={{ marginRight: '24px' }}>{log.user}</span>
+                    <span>{log.action}</span>
+                  </div>
+                )}
+              />
             </div>
           </div>
         </div>
@@ -344,7 +371,7 @@ const BuildsTab: React.FC = () => {
             {/* 第一行：应用名、版本号和空白占位 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>应用名：</span>
+                <span style={{ fontWeight: 600 }}>应用名：</span>
                 <Select
                   value={selectedAppId}
                   style={{ width: 200, marginLeft: '8px' }}
@@ -353,7 +380,7 @@ const BuildsTab: React.FC = () => {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <span>版本号：</span>
+                <span style={{ fontWeight: 600 }}>版本号：</span>
                 <span style={{ margin: '0 8px' }}>{buildConfig.oldVersion}</span>
                 <ArrowRightOutlined />
                 <span style={{ marginLeft: '8px' }}>{buildConfig.newVersion}</span>
@@ -364,23 +391,31 @@ const BuildsTab: React.FC = () => {
             {/* 第二行：安装包名、构建方式、部署方式 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>安装包名：</span>
+                <span style={{ fontWeight: 600 }}>安装包名：</span>
                 <span>{buildConfig.packageName}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>构建方式：</span>
+                <span style={{ fontWeight: 600 }}>构建方式：</span>
                 <span>{buildConfig.buildMethod}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>部署方式：</span>
+                <span style={{ fontWeight: 600 }}>部署方式：</span>
                 <span>{buildConfig.deployMethod}</span>
               </div>
             </div>
 
+            {/* 部署分支行 */}
+            <div style={{ display: 'flex', marginBottom: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: 600 }}>部署分支：</span>
+                <span>{buildConfig.branch || 'main'}</span>
+              </div>
+            </div>
+
             {/* 第三行：部署列表 */}
-            <div style={{ marginBottom: '16px' }}>
-              <span>部署列表：</span>
-              <div style={{ marginTop: '8px' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontWeight: 600, marginRight: '8px' }}>部署列表：</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {buildConfig.servers.map((server: any, index: number) => (
                   <span key={index} style={{ marginRight: '16px' }}>
                     {renderServerStatus(server.ip, server.deployStatus)}
@@ -396,7 +431,7 @@ const BuildsTab: React.FC = () => {
 
             {/* 第五行：进度条和构建部署按钮 */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.buildProgress}
                   status={buildConfig.buildProgress === 100 ? 'success' : 'active'}
@@ -407,7 +442,7 @@ const BuildsTab: React.FC = () => {
               <div style={{ margin: '0 16px' }}>
                 {renderBuildStatus(buildConfig.buildStatus)}
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.deployProgress}
                   status={buildConfig.deployProgress === 100 ? 'success' : 'active'}
@@ -452,13 +487,17 @@ const BuildsTab: React.FC = () => {
           <div className="operation-logs">
             <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
             <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              {operationLogs.map((log, index) => (
-                <div key={index} style={{ marginBottom: '8px', whiteSpace: 'pre-line' }}>
-                  <span style={{ marginRight: '24px' }}>{log.time}</span>
-                  <span style={{ marginRight: '24px' }}>{log.user}</span>
-                  <span>{log.action}</span>
-                </div>
-              ))}
+              <List
+                dataSource={operationLogs}
+                pagination={paginationConfig}
+                renderItem={(log, index) => (
+                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
+                    <span style={{ marginRight: '24px' }}>{log.time}</span>
+                    <span style={{ marginRight: '24px' }}>{log.user}</span>
+                    <span>{log.action}</span>
+                  </div>
+                )}
+              />
             </div>
           </div>
         </div>
@@ -475,7 +514,7 @@ const BuildsTab: React.FC = () => {
             {/* 第一行：应用名、版本号和空白占位 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>应用名：</span>
+                <span style={{ fontWeight: 600 }}>应用名：</span>
                 <Select
                   value={selectedAppId}
                   style={{ width: 200, marginLeft: '8px' }}
@@ -484,7 +523,7 @@ const BuildsTab: React.FC = () => {
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <span>版本号：</span>
+                <span style={{ fontWeight: 600 }}>版本号：</span>
                 <span style={{ margin: '0 8px' }}>{buildConfig.oldVersion}</span>
                 <ArrowRightOutlined />
                 <span style={{ marginLeft: '8px' }}>{buildConfig.newVersion}</span>
@@ -495,23 +534,31 @@ const BuildsTab: React.FC = () => {
             {/* 第二行：安装包名、构建方式、部署方式 */}
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div style={{ flex: 1 }}>
-                <span>安装包名：</span>
+                <span style={{ fontWeight: 600 }}>安装包名：</span>
                 <span>{buildConfig.packageName}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>构建方式：</span>
+                <span style={{ fontWeight: 600 }}>构建方式：</span>
                 <span>{buildConfig.buildMethod}</span>
               </div>
               <div style={{ flex: 1 }}>
-                <span>部署方式：</span>
+                <span style={{ fontWeight: 600 }}>部署方式：</span>
                 <span>{buildConfig.deployMethod}</span>
               </div>
             </div>
 
+            {/* 部署分支行 */}
+            <div style={{ display: 'flex', marginBottom: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <span style={{ fontWeight: 600 }}>部署分支：</span>
+                <span>{buildConfig.branch || 'main'}</span>
+              </div>
+            </div>
+
             {/* 第三行：部署列表 */}
-            <div style={{ marginBottom: '16px' }}>
-              <span>部署列表：</span>
-              <div style={{ marginTop: '8px' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
+              <span style={{ fontWeight: 600, marginRight: '8px' }}>部署列表：</span>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
                 {buildConfig.servers.map((server: any, index: number) => (
                   <span key={index} style={{ marginRight: '16px' }}>
                     {renderServerStatus(server.ip, server.deployStatus)}
@@ -527,7 +574,7 @@ const BuildsTab: React.FC = () => {
 
             {/* 第五行：进度条和构建部署按钮 */}
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.buildProgress}
                   status={buildConfig.buildProgress === 100 ? 'success' : 'active'}
@@ -538,7 +585,7 @@ const BuildsTab: React.FC = () => {
               <div style={{ margin: '0 16px' }}>
                 {renderBuildStatus(buildConfig.buildStatus)}
               </div>
-              <div style={{ flex: 1 }}>
+              <div style={{ flex: 1, maxWidth: '250px' }}>
                 <Progress
                   percent={buildConfig.deployProgress}
                   status={buildConfig.deployProgress === 100 ? 'success' : 'active'}
@@ -583,13 +630,17 @@ const BuildsTab: React.FC = () => {
           <div className="operation-logs">
             <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
             <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              {operationLogs.map((log, index) => (
-                <div key={index} style={{ marginBottom: '8px', whiteSpace: 'pre-line' }}>
-                  <span style={{ marginRight: '24px' }}>{log.time}</span>
-                  <span style={{ marginRight: '24px' }}>{log.user}</span>
-                  <span>{log.action}</span>
-                </div>
-              ))}
+              <List
+                dataSource={operationLogs}
+                pagination={paginationConfig}
+                renderItem={(log, index) => (
+                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
+                    <span style={{ marginRight: '24px' }}>{log.time}</span>
+                    <span style={{ marginRight: '24px' }}>{log.user}</span>
+                    <span>{log.action}</span>
+                  </div>
+                )}
+              />
             </div>
           </div>
         </div>
@@ -599,7 +650,6 @@ const BuildsTab: React.FC = () => {
 
   return (
     <div className="builds-tab">
-      <h3 style={{ marginBottom: '24px' }}>构建列表页面</h3>
       <Tabs activeKey={activeTab} items={tabItems} onChange={handleTabChange} />
     </div>
   );

@@ -20,6 +20,7 @@ const RequirementsTab: React.FC = () => {
       dataIndex: 'id',
       key: 'id',
       width: 100,
+      align: 'center',
     },
     {
       title: '需求名称',
@@ -27,42 +28,49 @@ const RequirementsTab: React.FC = () => {
       key: 'name',
       ellipsis: true,
       width: 200,
+      align: 'center',
     },
     {
       title: '所属版本',
       dataIndex: 'version',
       key: 'version',
       width: 100,
+      align: 'center',
     },
     {
       title: '所属应用',
       dataIndex: 'application',
       key: 'application',
       width: 150,
+      align: 'center',
     },
     {
       title: '所属模块',
       dataIndex: 'module',
       key: 'module',
       width: 150,
+      align: 'center',
     },
     {
       title: '需求等级',
       dataIndex: 'level',
       key: 'level',
       width: 80,
+      align: 'center',
     },
     {
       title: '创建人',
       dataIndex: 'creator',
       key: 'creator',
       width: 100,
+      align: 'center',
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
       width: 120,
+      align: 'center',
     },
   ];
 
@@ -73,7 +81,7 @@ const RequirementsTab: React.FC = () => {
           columns={columns}
           dataSource={requirements}
           rowKey="id"
-          pagination={{ pageSize: 10 }}
+          pagination={false}
           size="middle"
           className="requirements-table"
         />

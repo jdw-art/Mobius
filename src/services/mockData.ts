@@ -242,6 +242,7 @@ export const getMockEnvironmentBuildConfig = (env: EnvironmentType): any => {
     packageName: 'user-center-2.1.0.jar',
     buildMethod: 'maven',
     deployMethod: 'docker',
+    branch: 'feature/user-management-refactor',
     servers: [
       { ip: '192.168.1.101', deployStatus: true },
       { ip: '192.168.1.102', deployStatus: true },
@@ -255,7 +256,7 @@ export const getMockEnvironmentBuildConfig = (env: EnvironmentType): any => {
 
   // 根据环境类型返回不同的配置
   if (env === '测试环境') {
-    return { ...baseConfig, buildStatus: '构建成功', deployStatus: '部署成功', buildProgress: 100, deployProgress: 100 };
+    return { ...baseConfig, buildStatus: '构建成功', deployStatus: '部署成功', buildProgress: 100, deployProgress: 100, branch: 'feature/user-management-refactor' };
   } else if (env === '预发布环境') {
     return { ...baseConfig, buildStatus: '构建成功', deployStatus: '部署中', buildProgress: 100, deployProgress: 50 };
   } else {
@@ -343,6 +344,51 @@ export const getMockOperationLogs = (): OperationLog[] => {
       time: '2024-02-20 14:20:05',
       user: '王五',
       action: '开始构建到预发布环境'
+    },
+    {
+      time: '2024-02-20 14:45:33',
+      user: '系统',
+      action: '预发布环境构建成功'
+    },
+    {
+      time: '2024-02-20 15:00:12',
+      user: '赵六',
+      action: '开始部署到预发布环境'
+    },
+    {
+      time: '2024-02-20 15:30:55',
+      user: '系统',
+      action: '预发布环境部署成功'
+    },
+    {
+      time: '2024-02-21 09:10:22',
+      user: '钱七',
+      action: '开始构建到正式环境'
+    },
+    {
+      time: '2024-02-21 09:35:44',
+      user: '系统',
+      action: '正式环境构建成功'
+    },
+    {
+      time: '2024-02-21 10:00:18',
+      user: '孙八',
+      action: '开始部署到正式环境'
+    },
+    {
+      time: '2024-02-21 10:45:33',
+      user: '系统',
+      action: '正式环境部署成功'
+    },
+    {
+      time: '2024-02-21 11:00:55',
+      user: '周九',
+      action: '验证正式环境功能正常'
+    },
+    {
+      time: '2024-02-21 14:20:11',
+      user: '吴十',
+      action: '更新文档版本到V2.1.0'
     }
   ];
 };
