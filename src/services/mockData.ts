@@ -1,4 +1,4 @@
-import { Project } from '@/types';
+import { Project, Requirement, Application, Document, EnvironmentType, BuildingProject, UnbuiltProject, OperationLog, BuildStatus, DeployStatus } from '@/types';
 
 // 模拟项目详情数据
 export const getMockProjectDetail = (id: string): Project => {
@@ -78,4 +78,271 @@ export const getWorkflowMilestones = (fromStep: number): string[] => {
     default:
       return [];
   }
+};
+
+// 模拟需求数据
+export const getMockRequirements = (): Requirement[] => {
+  return [
+    {
+      id: 'REQ001',
+      name: '用户管理功能优化',
+      version: 'V2.1.0',
+      application: '用户中心',
+      module: '用户管理',
+      level: '高',
+      creator: '张三',
+      createTime: '2024-01-15'
+    },
+    {
+      id: 'REQ002',
+      name: '登录流程重构',
+      version: 'V2.1.0',
+      application: '统一认证',
+      module: '认证中心',
+      level: '高',
+      creator: '李四',
+      createTime: '2024-01-16'
+    },
+    {
+      id: 'REQ003',
+      name: '新增数据报表功能',
+      version: 'V2.1.0',
+      application: '数据分析平台',
+      module: '报表管理',
+      level: '中',
+      creator: '王五',
+      createTime: '2024-01-17'
+    },
+    {
+      id: 'REQ004',
+      name: '性能优化',
+      version: 'V2.1.0',
+      application: '用户中心',
+      module: '接口服务',
+      level: '中',
+      creator: '赵六',
+      createTime: '2024-01-18'
+    },
+    {
+      id: 'REQ005',
+      name: '安全加固',
+      version: 'V2.1.0',
+      application: '统一认证',
+      module: '安全模块',
+      level: '高',
+      creator: '钱七',
+      createTime: '2024-01-19'
+    }
+  ];
+};
+
+// 模拟文档数据
+export const getMockDocuments = (): Document[] => {
+  return [
+    {
+      id: 'DOC001',
+      type: '需求文档',
+      name: '用户管理系统需求规格说明书',
+      link: 'https://example.com/docs/req001.pdf',
+      creator: '张三',
+      createTime: '2024-01-10'
+    },
+    {
+      id: 'DOC002',
+      type: '详细设计',
+      name: '用户管理系统架构设计文档',
+      link: 'https://example.com/docs/design001.pdf',
+      creator: '李四',
+      createTime: '2024-01-15'
+    },
+    {
+      id: 'DOC003',
+      type: '测试报告',
+      name: '用户管理系统单元测试报告',
+      link: 'https://example.com/docs/test001.pdf',
+      creator: '王五',
+      createTime: '2024-01-20'
+    }
+  ];
+};
+
+// 模拟应用数据
+export const getMockApplications = (): Application[] => {
+  return [
+    {
+      id: 'APP001',
+      name: '用户中心',
+      branch: 'master',
+      version: 'V2.1.0',
+      testStatus: '已测试',
+      deployMethod: 'maven',
+      unitTest: '通过',
+      codeScan: '通过',
+      codeReview: '评审通过',
+      status: '正常'
+    },
+    {
+      id: 'APP002',
+      name: '统一认证',
+      branch: 'develop',
+      version: 'V2.1.0',
+      testStatus: '已测试',
+      deployMethod: 'dubbo',
+      unitTest: '通过',
+      codeScan: '通过',
+      codeReview: '评审通过',
+      status: '正常'
+    },
+    {
+      id: 'APP003',
+      name: '数据分析平台',
+      branch: 'feature/report',
+      version: 'V2.1.0',
+      testStatus: '未测试',
+      deployMethod: 'tomcat',
+      unitTest: '未通过',
+      codeScan: '未通过',
+      codeReview: '驳回',
+      status: '待修复'
+    },
+    {
+      id: 'APP004',
+      name: '订单管理系统',
+      branch: 'master',
+      version: 'V1.5.0',
+      testStatus: '已测试',
+      deployMethod: 'maven',
+      unitTest: '通过',
+      codeScan: '通过',
+      codeReview: '评审通过',
+      status: '正常'
+    },
+    {
+      id: 'APP005',
+      name: '支付服务',
+      branch: 'develop',
+      version: 'V1.2.0',
+      testStatus: '未测试',
+      deployMethod: 'dubbo',
+      unitTest: '通过',
+      codeScan: '通过',
+      codeReview: '未开始',
+      status: '开发中'
+    }
+  ];
+};
+
+// 模拟构建环境数据
+export const getMockEnvironmentBuildConfig = (env: EnvironmentType): any => {
+  const baseConfig = {
+    selectedAppId: 'APP001',
+    selectedAppName: '用户中心',
+    oldVersion: 'V2.0.0',
+    newVersion: 'V2.1.0',
+    packageName: 'user-center-2.1.0.jar',
+    buildMethod: 'maven',
+    deployMethod: 'docker',
+    servers: [
+      { ip: '192.168.1.101', deployStatus: true },
+      { ip: '192.168.1.102', deployStatus: true },
+      { ip: '192.168.1.103', deployStatus: false }
+    ],
+    buildStatus: '未构建' as BuildStatus,
+    deployStatus: '未部署' as DeployStatus,
+    buildProgress: 0,
+    deployProgress: 0
+  };
+
+  // 根据环境类型返回不同的配置
+  if (env === '测试环境') {
+    return { ...baseConfig, buildStatus: '构建成功', deployStatus: '部署成功', buildProgress: 100, deployProgress: 100 };
+  } else if (env === '预发布环境') {
+    return { ...baseConfig, buildStatus: '构建成功', deployStatus: '部署中', buildProgress: 100, deployProgress: 50 };
+  } else {
+    return baseConfig;
+  }
+};
+
+// 模拟构建中项目数据
+export const getMockBuildingProjects = (): BuildingProject[] => {
+  return [
+    {
+      id: 'BUILD001',
+      branch: 'feature/user-management',
+      projectName: '用户管理系统',
+      projectId: 'PRJ001',
+      tester: '钱七',
+      coverage: 78,
+      canUpdateCoverage: true
+    },
+    {
+      id: 'BUILD002',
+      branch: 'develop',
+      projectName: '统一认证服务',
+      projectId: 'PRJ002',
+      tester: '孙八',
+      coverage: 65,
+      canUpdateCoverage: true
+    },
+    {
+      id: 'BUILD003',
+      branch: 'feature/report',
+      projectName: '数据分析平台',
+      projectId: 'PRJ003',
+      tester: '周九',
+      coverage: 90,
+      canUpdateCoverage: false
+    }
+  ];
+};
+
+// 模拟未构建项目数据
+export const getMockUnbuiltProjects = (): UnbuiltProject[] => {
+  return [
+    {
+      id: 'UNBUILD001',
+      branch: 'master',
+      projectName: '订单管理系统',
+      projectId: 'PRJ004',
+      tester: '吴十'
+    },
+    {
+      id: 'UNBUILD002',
+      branch: 'feature/payment',
+      projectName: '支付服务',
+      projectId: 'PRJ005',
+      tester: '郑十一'
+    }
+  ];
+};
+
+// 模拟操作日志数据
+export const getMockOperationLogs = (): OperationLog[] => {
+  return [
+    {
+      time: '2024-02-20 10:15:30',
+      user: '张三',
+      action: '开始构建用户中心V2.1.0'
+    },
+    {
+      time: '2024-02-20 10:30:45',
+      user: '系统',
+      action: '构建成功'
+    },
+    {
+      time: '2024-02-20 10:35:10',
+      user: '李四',
+      action: '开始部署到测试环境'
+    },
+    {
+      time: '2024-02-20 11:00:22',
+      user: '系统',
+      action: '部署成功'
+    },
+    {
+      time: '2024-02-20 14:20:05',
+      user: '王五',
+      action: '开始构建到预发布环境'
+    }
+  ];
 };

@@ -96,6 +96,76 @@ export interface LayoutProps {
   children: React.ReactNode;
 }
 
+// 需求相关类型
+export interface Requirement {
+  id: string;
+  name: string;
+  version: string;
+  application: string;
+  module: string;
+  level: string;
+  creator: string;
+  createTime: string;
+}
+
+// 文档相关类型
+export interface Document {
+  id: string;
+  type: '需求文档' | '详细设计' | '测试报告';
+  name: string;
+  link: string;
+  creator: string;
+  createTime: string;
+}
+
+// 应用相关类型
+export interface Application {
+  id: string;
+  name: string;
+  branch: string;
+  version: string;
+  testStatus: '已测试' | '未测试';
+  deployMethod: 'maven' | 'dubbo' | 'tomcat';
+  unitTest: '通过' | '未通过';
+  codeScan: '通过' | '未通过';
+  codeReview: '未开始' | '评审通过' | '驳回';
+  status: string;
+}
+
+// 构建相关类型
+export type EnvironmentType = '测试环境' | '预发布环境' | '正式环境';
+export type BuildStatus = '未构建' | '构建中' | '构建成功' | '构建失败';
+export type DeployStatus = '未部署' | '部署中' | '部署成功' | '部署失败';
+
+export interface ServerInfo {
+  ip: string;
+  deployStatus: boolean; // true表示部署完成，false表示未完成
+}
+
+export interface BuildingProject {
+  id: string;
+  branch: string;
+  projectName: string;
+  projectId: string;
+  tester: string;
+  coverage: number;
+  canUpdateCoverage: boolean;
+}
+
+export interface UnbuiltProject {
+  id: string;
+  branch: string;
+  projectName: string;
+  projectId: string;
+  tester: string;
+}
+
+export interface OperationLog {
+  time: string;
+  user: string;
+  action: string;
+}
+
 // 通用类型
 export type StatusColor = 'processing' | 'warning' | 'blue' | 'orange' | 'red' | 'green' | 'default';
 export type WorkflowStatusColor = '#52c41a' | '#faad14' | '#d9d9d9';
