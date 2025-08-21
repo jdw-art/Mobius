@@ -52,30 +52,38 @@ const ReviewProcessItem: React.FC<ReviewProcessItemProps> = ({
           {process.reviewTime}
         </Col>
         <Col>
-          <Button 
-            size="small" 
-            type="link" 
-            style={{ marginRight: 2, fontSize: '13px', color: '#1890ff' }}
-            onClick={() => onReminder(process.id)}
-          >
-            催一下
-          </Button>
-          <Button 
-            size="small" 
-            type="link" 
-            style={{ marginRight: 2, fontSize: '13px', color: '#1890ff' }}
-            onClick={() => onReviewAction(process.id, 'approved')}
-          >
-            通过
-          </Button>
-          <Button 
-            size="small" 
-            type="link" 
-            style={{ fontSize: '13px', color: '#ff4d4f' }}
-            onClick={() => onReviewAction(process.id, 'rejected')}
-          >
-            驳回
-          </Button>
+          {process.status === 'approved' ? (
+            <span style={{ fontSize: '13px', color: '#1890ff', fontWeight: 'bold' }}>通过</span>
+          ) : process.status === 'rejected' ? (
+            <span style={{ fontSize: '13px', color: '#ff4d4f', fontWeight: 'bold' }}>驳回</span>
+          ) : (
+            <>
+              <Button 
+                size="small" 
+                type="link" 
+                style={{ marginRight: 2, fontSize: '13px', color: '#1890ff' }}
+                onClick={() => onReminder(process.id)}
+              >
+                催一下
+              </Button>
+              <Button 
+                size="small" 
+                type="link" 
+                style={{ marginRight: 2, fontSize: '13px', color: '#1890ff' }}
+                onClick={() => onReviewAction(process.id, 'approved')}
+              >
+                通过
+              </Button>
+              <Button 
+                size="small" 
+                type="link" 
+                style={{ fontSize: '13px', color: '#ff4d4f' }}
+                onClick={() => onReviewAction(process.id, 'rejected')}
+              >
+                驳回
+              </Button>
+            </>
+          )}
         </Col>
       </Row>
 

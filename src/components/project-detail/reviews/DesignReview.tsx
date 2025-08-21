@@ -285,36 +285,38 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
         )}
       </Card>
 
-      {/* 评审流程卡片 */}
-      <Card className="review-card" style={{ marginBottom: 24 }}>
-        <Row gutter={16} style={{ alignItems: 'center', marginBottom: 24 }}>
-          <Col span={2} style={{ fontSize: '16px', fontWeight: 'bold' }}>
-            设计评审
-          </Col>
-          <Col span={6}>
-            <Progress percent={60} size="small" status="active" style={{ width: '75%' }} />
-          </Col>
-          <Col span={3} style={{ fontSize: '15px', textAlign: 'left' }}>
-            <div style={{ marginTop: 4 }}>3/5 通过</div>
-          </Col>
-          <Col span={7} style={{ fontSize: '15px', textAlign: 'left' }}>
-            <span>期望完成时间：</span>
-            <span>{reviewInfo.plannedCompleteTime}</span>
-          </Col>
-        </Row>
-        
-        {reviewProcesses.map((process, index) => (
-          <ReviewProcessItem
-            key={process.id}
-            process={process}
-            index={index}
-            totalLength={reviewProcesses.length}
-            onCommentChange={handleCommentChange}
-            onReminder={handleReminder}
-            onReviewAction={handleReviewAction}
-          />
-        ))}
-      </Card>
+      {/* 评审流程卡片 - 仅在提交确认后显示 */}
+      {isSubmitted && (
+        <Card className="review-card" style={{ marginBottom: 24 }}>
+          <Row gutter={16} style={{ alignItems: 'center', marginBottom: 24 }}>
+            <Col span={2} style={{ fontSize: '16px', fontWeight: 'bold' }}>
+              设计评审
+            </Col>
+            <Col span={6}>
+              <Progress percent={60} size="small" status="active" style={{ width: '75%' }} />
+            </Col>
+            <Col span={3} style={{ fontSize: '15px', textAlign: 'left' }}>
+              <div style={{ marginTop: 4 }}>3/5 通过</div>
+            </Col>
+            <Col span={7} style={{ fontSize: '15px', textAlign: 'left' }}>
+              <span>期望完成时间：</span>
+              <span>{reviewInfo.plannedCompleteTime}</span>
+            </Col>
+          </Row>
+          
+          {reviewProcesses.map((process, index) => (
+            <ReviewProcessItem
+              key={process.id}
+              process={process}
+              index={index}
+              totalLength={reviewProcesses.length}
+              onCommentChange={handleCommentChange}
+              onReminder={handleReminder}
+              onReviewAction={handleReviewAction}
+            />
+          ))}
+        </Card>
+      )}
 
       {/* 操作日志卡片 */}
       <Row gutter={16} style={{ marginBottom: 5 }}>
