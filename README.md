@@ -1,15 +1,15 @@
-# DevOps System - React + TypeScript
+# DevOps一体化平台
 
-一个基于React和TypeScript的DevOps一体化平台，采用现代化的项目架构和最佳实践。
+一个基于React和TypeScript的DevOps一体化平台，提供项目管理、需求管理、缺陷跟踪、代码评审、构建部署等一站式DevOps解决方案，采用现代化的项目架构和最佳实践。
 
 ## 🚀 技术栈
 
 - **前端框架**: React 18.2.0
-- **开发语言**: TypeScript 5.0
+- **开发语言**: TypeScript 4.9.0
 - **UI组件库**: Ant Design 5.0
 - **路由管理**: React Router DOM 6.8
 - **日期处理**: Day.js 1.11
-- **代码规范**: ESLint + TypeScript ESLint
+- **构建工具**: CRA + Craco 7.1.0
 
 ## 📁 项目结构
 
@@ -17,9 +17,27 @@
 src/
 ├── components/          # 组件目录
 │   ├── common/         # 通用组件
+│   │   ├── OperationLogList.tsx
+│   │   └── ReviewProcessItem.tsx
 │   ├── layout/         # 布局组件
 │   ├── ProjectList.tsx # 项目列表组件
-│   └── ProjectDetail.tsx # 项目详情组件
+│   ├── ProjectDetail.tsx # 项目详情组件
+│   └── project-detail/  # 项目详情子模块
+│       ├── AcceptanceTab.tsx
+│       ├── ApplicationsTab.tsx
+│       ├── BuildsTab.tsx
+│       ├── DefectsTab.tsx
+│       ├── DocumentsTab.tsx
+│       ├── OverviewTab.tsx
+│       ├── RequirementsTab.tsx
+│       ├── ReviewTab.tsx
+│       ├── RisksTab.tsx
+│       ├── TasksTab.tsx
+│       └── reviews/     # 评审相关组件
+│           ├── CodeReview.tsx
+│           ├── DesignReview.tsx
+│           ├── ReleaseReview.tsx
+│           └── TestCaseReview.tsx
 ├── pages/              # 页面组件
 │   ├── ProjectListPage.tsx
 │   └── ProjectDetailPage.tsx
@@ -59,24 +77,35 @@ npm install
 npm start
 ```
 
+启动开发服务器，访问 http://localhost:3000 查看应用
+
 ### 构建生产版本
 
 ```bash
 npm run build
 ```
 
+构建应用到build目录
+
 ### 代码检查
 
 ```bash
-npm run lint
-npm run lint:fix
 npm run type-check
 ```
 
+运行TypeScript类型检查
+
 ## 🎯 主要功能
 
-- **项目管理**: 项目列表展示、搜索、过滤
-- **项目详情**: 项目信息、工作流状态、进度跟踪
+- **项目管理**: 项目列表展示、搜索、过滤、项目信息管理
+- **需求管理**: 需求跟踪、变更管理
+- **任务管理**: 任务分配、状态跟踪、进度管理
+- **缺陷管理**: 缺陷上报、分配、解决和验证
+- **代码评审**: 代码审查流程、评审意见管理
+- **设计评审**: 设计文档评审、评审流程管理、评审操作日志
+- **测试管理**: 测试用例评审、测试计划跟踪
+- **构建部署**: 多环境构建配置、部署状态跟踪
+- **文档管理**: 项目文档集中管理
 - **团队协作**: 团队成员管理、角色分配
 - **流程管理**: 工作流状态图、里程碑跟踪
 
@@ -86,11 +115,13 @@ npm run type-check
 - 使用PascalCase命名组件文件
 - 页面组件以Page结尾
 - 布局组件放在layout目录
+- 通用可复用组件放在common目录
 
 ### 类型定义
 - 所有接口和类型定义放在types目录
 - 使用TypeScript严格模式
 - 为所有props定义接口
+- 使用type-only import导入类型
 
 ### 工具函数
 - 通用工具函数放在utils目录
