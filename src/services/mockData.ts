@@ -375,6 +375,42 @@ export const getMockUnbuiltProjects = (): UnbuiltProject[] => {
   ];
 };
 
+// 模拟代码分支数据
+export const getMockCodeBranches = (): string[] => {
+  return [
+    'main',
+    'develop',
+    'feature/code-review-2024',
+    'feature/performance-optimization',
+    'bugfix/login-issue'
+  ];
+};
+
+// 模拟代码评审数据
+export const getMockCodeReviewData = () => {
+  return {
+    projectId: 'PRJ001',
+    requirementId: 'REQ001',
+    creator: '赵六',
+    createTime: '2024-02-10 09:15',
+    plannedCompleteTime: '2024-02-15',
+    codeBranch: 'feature/code-review-2024',
+    codeBranches: getMockCodeBranches(),
+    reviewProcesses: [
+      {
+        id: 'backend-review',
+        title: '技术团队负责人评审',
+        description: '后端代码规范和质量检查',
+        status: 'pending' as const,
+        reviewers: ['赵六', '吴十'],
+        reviewTime: '2024-02-12 10:30:00',
+        comment: '',
+        commentEditable: true
+      }
+    ]
+  };
+};
+
 // 模拟操作日志数据
 export const getMockOperationLogs = (): OperationLog[] => {
   return [

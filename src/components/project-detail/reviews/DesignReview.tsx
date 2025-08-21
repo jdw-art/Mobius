@@ -95,7 +95,7 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
     }));
 
     setIsSubmitted(true);
-    message.success('评审信息更新成功');
+    message.success('设计评审提交成功');
   };
 
   // 处理输入变化
