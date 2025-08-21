@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Tabs, Select, Input, Button, Table, Space, Progress, Tag, List } from 'antd';
+import { Tabs, Select, Input, Button, Table, Space, Progress, Tag } from 'antd';
+import OperationLogList from '../common/OperationLogList';
 import type { TabsProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { ArrowRightOutlined, PlayCircleOutlined } from '@ant-design/icons';
@@ -341,22 +342,7 @@ const BuildsTab: React.FC = () => {
           </div>
 
           {/* 操作日志 */}
-          <div className="operation-logs">
-            <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
-            <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              <List
-                dataSource={operationLogs}
-                pagination={paginationConfig}
-                renderItem={(log, index) => (
-                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
-                    <span style={{ marginRight: '24px' }}>{log.time}</span>
-                    <span style={{ marginRight: '24px' }}>{log.user}</span>
-                    <span>{log.action}</span>
-                  </div>
-                )}
-              />
-            </div>
-          </div>
+          <OperationLogList logs={operationLogs} pagination={paginationConfig} />
         </div>
       ),
     },
@@ -484,22 +470,7 @@ const BuildsTab: React.FC = () => {
           </div>
 
           {/* 操作日志 */}
-          <div className="operation-logs">
-            <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
-            <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              <List
-                dataSource={operationLogs}
-                pagination={paginationConfig}
-                renderItem={(log, index) => (
-                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
-                    <span style={{ marginRight: '24px' }}>{log.time}</span>
-                    <span style={{ marginRight: '24px' }}>{log.user}</span>
-                    <span>{log.action}</span>
-                  </div>
-                )}
-              />
-            </div>
-          </div>
+          <OperationLogList logs={operationLogs} pagination={paginationConfig} />
         </div>
       ),
     },
@@ -627,22 +598,7 @@ const BuildsTab: React.FC = () => {
           </div>
 
           {/* 操作日志 */}
-          <div className="operation-logs">
-            <h4 style={{ marginBottom: '16px' }}>操作日志</h4>
-            <div style={{ padding: '16px', border: '1px solid #d9d9d9', borderRadius: '4px' }}>
-              <List
-                dataSource={operationLogs}
-                pagination={paginationConfig}
-                renderItem={(log, index) => (
-                  <div key={index} style={{ marginBottom: '4px', whiteSpace: 'pre-line' }}>
-                    <span style={{ marginRight: '24px' }}>{log.time}</span>
-                    <span style={{ marginRight: '24px' }}>{log.user}</span>
-                    <span>{log.action}</span>
-                  </div>
-                )}
-              />
-            </div>
-          </div>
+          <OperationLogList logs={operationLogs} pagination={paginationConfig} />
         </div>
       ),
     },

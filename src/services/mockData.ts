@@ -297,6 +297,64 @@ export const getMockBuildingProjects = (): BuildingProject[] => {
   ];
 };
 
+// 评审流程接口定义
+export interface ReviewProcess {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewers: string[];
+  reviewTime: string;
+  comment?: string;
+  commentEditable: boolean;
+}
+
+// 模拟设计评审数据
+export const getMockDesignReviewData = () => {
+  return {
+    title: '用户管理系统架构设计评审',
+    projectId: 'PRJ001',
+    requirementId: 'REQ001',
+    creator: '李四',
+    createTime: '2024-01-20 14:30',
+    updateTime: '2024-01-22 16:45',
+    plannedCompleteTime: '2024-01-25',
+    designDocumentLink: 'https://example.com/docs/design001.pdf',
+    reviewProcesses: [
+      {
+        id: 'test-review',
+        title: '测试评审',
+        description: '测试负责人确认设计的可测试性',
+        status: 'pending' as const,
+        reviewers: ['钱七', '孙八'],
+        reviewTime: '2024-01-23 10:15:30',
+        comment: '',
+        commentEditable: true
+      },
+      {
+        id: 'tech-review',
+        title: '技术团队负责人评审',
+        description: '技术负责人确认设计的技术可行性',
+        status: 'pending' as const,
+        reviewers: ['李四'],
+        reviewTime: '2024-01-24 14:30:45',
+        comment: '',
+        commentEditable: true
+      },
+      {
+        id: 'product-review',
+        title: '产品评审',
+        description: '产品负责人确认设计符合产品需求',
+        status: 'pending' as const,
+        reviewers: ['张三'],
+        reviewTime: '2024-01-25 16:20:10',
+        comment: '',
+        commentEditable: true
+      }
+    ]
+  };
+};
+
 // 模拟未构建项目数据
 export const getMockUnbuiltProjects = (): UnbuiltProject[] => {
   return [
