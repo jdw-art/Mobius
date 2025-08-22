@@ -96,6 +96,19 @@ export interface LayoutProps {
   children: React.ReactNode;
 }
 
+// 风险相关类型
+export interface RiskItem {
+  id: string;
+  riskType: string;
+  riskItem: string;
+  riskStatus: 'yes' | 'no' | undefined;
+  remark?: string;
+}
+
+export interface RiskData {
+  riskItems: RiskItem[];
+}
+
 // 需求相关类型
 export interface Requirement {
   id: string;

@@ -1,4 +1,4 @@
-import { Project, Requirement, Application, Document, EnvironmentType, BuildingProject, UnbuiltProject, OperationLog, BuildStatus, DeployStatus } from '@/types';
+import { Project, Requirement, Application, Document, EnvironmentType, BuildingProject, UnbuiltProject, OperationLog, BuildStatus, DeployStatus, RiskData } from '@/types';
 
 // 模拟项目详情数据
 export const getMockProjectDetail = (id: string): Project => {
@@ -78,6 +78,21 @@ export const getWorkflowMilestones = (fromStep: number): string[] => {
     default:
       return [];
   }
+};
+
+// 模拟风险数据
+export const getMockRiskData = (): RiskData => {
+  return {
+    riskItems: [
+      { id: 'RISK001', riskType: '代码质量风险', riskItem: '是否有未解决的Bug', riskStatus: undefined },
+      { id: 'RISK002', riskType: '代码质量风险', riskItem: '新功能是否影响原有功能', riskStatus: undefined },
+      { id: 'RISK003', riskType: '基础设施与依赖风险', riskItem: '是否接入第三方服务', riskStatus: undefined },
+      { id: 'RISK004', riskType: '数据风险', riskItem: '是否涉及数据库迁移', riskStatus: undefined },
+      { id: 'RISK005', riskType: '数据风险', riskItem: '新老版本数据是否能兼容', riskStatus: undefined },
+      { id: 'RISK006', riskType: '业务风险', riskItem: '产品或系统业务方面是否涉及关键业务点风险', riskStatus: undefined },
+      { id: 'RISK007', riskType: '业务风险', riskItem: '是否涉及灰度方案设计', riskStatus: undefined },
+    ]
+  };
 };
 
 // 模拟需求数据

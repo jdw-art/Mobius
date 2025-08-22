@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import { getMockDocuments } from '@/services/mockData';
 import { TABLE_PAGINATION_CONFIG } from '@/constants';
 
@@ -22,12 +23,13 @@ const DocumentsTab: React.FC = () => {
   }, []);
 
   // 表格列配置
-  const columns = [
+  const columns: ColumnsType<Document> = [
     {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
       width: 120,
+      align: 'center',
       render: (text: string) => {
         let color = '';
         switch (text) {
@@ -50,12 +52,14 @@ const DocumentsTab: React.FC = () => {
       title: '名称',
       dataIndex: 'name',
       key: 'name',
-      ellipsis: true
+      ellipsis: true,
+      align: 'center'
     },
     {
       title: '链接',
       dataIndex: 'link',
       key: 'link',
+      align: 'center',
       render: (text: string) => (
         <a href={text} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
           查看文档
@@ -66,13 +70,15 @@ const DocumentsTab: React.FC = () => {
       title: '创建人',
       dataIndex: 'creator',
       key: 'creator',
-      width: 100
+      width: 100,
+      align: 'center'
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
       width: 160,
+      align: 'center',
       render: (text: string) => {
         // 确保时间精确到秒格式，示例格式：2024-01-10 12:30:45
         if (text.length === 10) { // 如果只有日期部分 YYYY-MM-DD
