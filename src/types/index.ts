@@ -182,3 +182,15 @@ export interface OperationLog {
 // 通用类型
 export type StatusColor = 'processing' | 'warning' | 'blue' | 'orange' | 'red' | 'green' | 'default';
 export type WorkflowStatusColor = '#52c41a' | '#faad14' | '#d9d9d9';
+
+// 测试用例相关类型
+export type TestCaseStatus = '未开始' | '通过' | '失败';
+
+export interface TestCase {
+  id: string;
+  name: string;
+  application: string;
+  creator: string;
+  createTime: string;
+  status: TestCaseStatus;
+}

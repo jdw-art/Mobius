@@ -1,13 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Tabs } from 'antd';
+import TestPlan from './defects/TestPlan';
+import TestDefects from './defects/TestDefects';
+
+const { TabPane } = Tabs;
 
 const DefectsTab: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('plan');
+
   return (
-    <div>
-      <h3>测试缺陷页面</h3>
-      <div className="defects-content">
-        {/* 测试缺陷内容将在这里实现 */}
-        <p>测试缺陷功能正在开发中...</p>
-      </div>
+    <div className="defects-page">
+      <Tabs 
+        activeKey={activeTab} 
+        onChange={setActiveTab} 
+        size="middle"
+        className="defects-tabs"
+      >
+        <TabPane tab="测试计划" key="plan">
+          <TestPlan />
+        </TabPane>
+        <TabPane tab="测试缺陷" key="defects">
+          <TestDefects />
+        </TabPane>
+      </Tabs>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Input, Button, Select, Dropdown, Space } from 'antd';
+import { Table, Input, Button, Select, Dropdown, Space, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, PlusOutlined, FileTextOutlined, CodeOutlined, ScanOutlined } from '@ant-design/icons';
 import { getMockApplications } from '../../services/mockData';
@@ -257,13 +257,20 @@ const ApplicationsTab: React.FC = () => {
           >
             添加应用
           </Button>
-          <Button 
-            type="default" 
-            danger
-            onClick={handleDeleteApplication}
+          <Popconfirm
+            title="确认删除"
+            onConfirm={handleDeleteApplication}
+            okText="确定"
+            cancelText="取消"
+            placement="topRight"
           >
-            删除应用
-          </Button>
+            <Button 
+              type="default" 
+              danger
+            >
+              删除应用
+            </Button>
+          </Popconfirm>
           <Button 
             type="default" 
             style={{ backgroundColor: '#fa8c16', color: 'white', border: 'none' }}
