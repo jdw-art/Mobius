@@ -513,6 +513,109 @@ export const getMockUATEnvironmentTestCases = (): TestCase[] => {
   ];
 };
 
+// 测试用例评审接口定义
+export interface TestCaseReviewInfo {
+  projectId: string;
+  requirementId: string;
+  creator: string;
+  createTime: string;
+  plannedCompleteTime: string;
+  testCaseCount: number;
+  reviewProcesses: ReviewProcess[];
+}
+
+// 发布评审接口定义
+export interface ReleaseReviewInfo {
+  projectId: string;
+  requirementId: string;
+  creator: string;
+  createTime: string;
+  preReleaseTime: string;
+  prodReleaseTime: string;
+  plannedCompleteTime: string;
+  reviewProcesses?: ReviewProcess[];
+}
+
+// 模拟测试用例评审数据
+export const getMockTestCaseReviewData = (): TestCaseReviewInfo => {
+  const testCases = getMockUATEnvironmentTestCases();
+  return {
+    projectId: 'PRJ001',
+    requirementId: 'REQ001',
+    creator: '钱七',
+    createTime: '2024-03-10 09:30',
+    plannedCompleteTime: '2024-03-15',
+    testCaseCount: testCases.length,
+    reviewProcesses: [
+      {
+        id: 'product-review',
+        title: '产品评审',
+        description: '产品负责人确认测试用例是否覆盖所有需求',
+        status: 'pending' as const,
+        reviewers: ['张三'],
+        reviewTime: '2024-03-12 10:00:00',
+        comment: '',
+        commentEditable: true
+      },
+      {
+        id: 'dev-review',
+        title: '开发人员评审',
+        description: '开发负责人确认测试用例的技术可行性',
+        status: 'pending' as const,
+        reviewers: ['李四', '赵六'],
+        reviewTime: '2024-03-14 14:00:00',
+        comment: '',
+        commentEditable: true
+      }
+    ]
+  };
+};
+
+// 模拟发布评审数据
+export const getMockReleaseReviewData = (): ReleaseReviewInfo => {
+  return {
+    projectId: 'PRJ001',
+    requirementId: 'REQ001',
+    creator: '王五',
+    createTime: '2024-03-15 10:00',
+    preReleaseTime: '2024-03-20 14:30',
+    prodReleaseTime: '2024-03-25 10:00',
+    plannedCompleteTime: '2024-03-28',
+    reviewProcesses: [
+      {
+        id: 'pm-review',
+        title: '项目经理评审',
+        description: '项目经理确认项目整体状态和发布准备情况',
+        status: 'pending' as const,
+        reviewers: ['王五'],
+        reviewTime: '2024-03-16 10:00:00',
+        comment: '',
+        commentEditable: true
+      },
+      {
+        id: 'tech-lead-review',
+        title: '技术负责人评审',
+        description: '技术负责人确认技术架构和代码质量符合要求',
+        status: 'pending' as const,
+        reviewers: ['李四'],
+        reviewTime: '2024-03-18 14:00:00',
+        comment: '',
+        commentEditable: true
+      },
+      {
+        id: 'ops-review',
+        title: '运维负责人评审',
+        description: '运维负责人确认部署方案和监控策略',
+        status: 'pending' as const,
+        reviewers: ['孙八'],
+        reviewTime: '2024-03-20 10:00:00',
+        comment: '',
+        commentEditable: true
+      }
+    ]
+  };
+};
+
 // 模拟操作日志数据
 export const getMockOperationLogs = (): OperationLog[] => {
   return [
