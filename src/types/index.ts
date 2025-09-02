@@ -105,6 +105,22 @@ export interface RiskItem {
   remark?: string;
 }
 
+// 缺陷相关类型
+export type Environment = '测试环境' | 'UAT环境';
+export type DefectStatus = '打开' | '修复中' | '关闭';
+
+export interface Defect {
+  id: string;
+  name: string;
+  environment: Environment;
+  application: string;
+  developer: string;
+  tester: string;
+  status: DefectStatus;
+  creator: string;
+  createTime: string;
+}
+
 export interface RiskData {
   riskItems: RiskItem[];
 }
