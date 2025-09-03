@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Card, Row, Col, Typography, Button, DatePicker, message, Popconfirm, Progress, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Typography, Button, DatePicker, message, Popconfirm, Progress, Table, Checkbox, Input, Form, Space } from 'antd';
 import dayjs from 'dayjs';
-import { getMockReleaseReviewData, getMockOperationLogs, getMockRiskData } from '@/services/mockData';
+import { getMockReleaseReviewData, getMockOperationLogs, getMockRiskData, getMockReleaseVerificationData } from '@/services/mockData';
 import OperationLogList from '../../common/OperationLogList';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
-import type { OperationLog } from '@/types';
-import type { ReleaseReviewInfo, ReviewProcess } from '@/services/mockData';
+import type { OperationLog, RiskData, RiskItem } from '@/types';
+import type { ReleaseReviewInfo, ReviewProcess, ReleaseVerificationData } from '@/services/mockData';
 
 const { Link } = Typography;
 
@@ -22,7 +22,71 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
   const [tempData, setTempData] = useState<Partial<ReleaseReviewInfo>>({});
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
-  const [riskData] = useState(getMockRiskData().riskItems);
+  const [riskData, setRiskData] = useState<RiskData>({ riskItems: [] });
+  const [form] = Form.useForm();
+  const [verificationData, setVerificationData] = useState<ReleaseVerificationData[]>([]);
+
+  // 获取模拟风险数据
+  useEffect(() => {
+    const data = getMockRiskData();
+    setRiskData(data);
+  }, []);
+
+  // 获取模拟发布验证数据
+  useEffect(() => {
+    const data = getMockReleaseVerificationData();
+    setVerificationData(data);
+  }, []);
+
+  // 处理风险认定变更
+  const handleRiskStatusChange = (id: string, status: 'yes' | 'no' | undefined) => {
+    setRiskData((prev: RiskData) => ({
+      ...prev,
+      riskItems: prev.riskItems.map((item: RiskItem) => 
+        item.id === id ? { ...item, riskStatus: status } : item
+      )
+    }));
+  };
+
+  // 处理备注变更
+  const handleRemarkChange = (id: string, remark: string) => {
+    setRiskData((prev: RiskData) => ({
+      ...prev,
+      riskItems: prev.riskItems.map((item: RiskItem) => 
+        item.id === id ? { ...item, remark } : item
+      )
+    }));
+  };
+
+  // 计算相同风险类型的单元格合并信息
+  const getRowSpanConfig = (dataSource: RiskItem[]): number[] => {
+    const rowSpanMap: Record<string, number> = {};
+    const rowSpanArray: number[] = [];
+    const skipMap: Record<number, boolean> = {};
+
+    // 统计每种风险类型出现的次数
+    dataSource.forEach((item: RiskItem) => {
+      rowSpanMap[item.riskType] = (rowSpanMap[item.riskType] || 0) + 1;
+    });
+
+    // 生成每行的rowSpan值
+    dataSource.forEach((item: RiskItem, index: number) => {
+      if (skipMap[index]) return;
+      
+      const span = rowSpanMap[item.riskType];
+      rowSpanArray[index] = span;
+      
+      // 标记需要跳过的行
+      for (let i = 1; i < span; i++) {
+        if (index + i < dataSource.length) {
+          rowSpanArray[index + i] = 0;
+          skipMap[index + i] = true;
+        }
+      }
+    });
+
+    return rowSpanArray;
+  };
 
   // 重置表单
   const handleReset = () => {
@@ -166,7 +230,7 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
               value={tempData.preReleaseTime ? dayjs(tempData.preReleaseTime) : null}
               onChange={(date) => handleDateChange('preReleaseTime', date)}
               placeholder="请选择日期"
-              style={{ width: '180px' }}
+              style={{ display: 'inline-block', width: 'calc(80% - 140px)' }}
             />
             {formErrors.preReleaseTime && (
               <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
@@ -180,7 +244,7 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
               value={tempData.prodReleaseTime ? dayjs(tempData.prodReleaseTime) : null}
               onChange={(date) => handleDateChange('prodReleaseTime', date)}
               placeholder="请选择日期"
-              style={{ width: '180px' }}
+              style={{ display: 'inline-block', width: 'calc(80% - 140px)' }}
             />
             {formErrors.prodReleaseTime && (
               <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
@@ -198,7 +262,7 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
               value={tempData.plannedCompleteTime ? dayjs(tempData.plannedCompleteTime) : null}
               onChange={(date) => handleDateChange('plannedCompleteTime', date)}
               placeholder="请选择日期"
-              style={{ width: '180px' }}
+              style={{ display: 'inline-block', width: 'calc(80% - 140px)' }}
             />
             {formErrors.plannedCompleteTime && (
               <div style={{ color: 'red', fontSize: '12px', marginTop: '4px' }}>
@@ -210,57 +274,135 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
         
         {/* 风险信息区域 */}
         <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={8} style={{ fontSize: '15px', marginTop: '8px' }}>
+            <strong style={{ fontSize: '15px' }}>风险评估</strong>
+          </Col>
+        </Row>
+        <Row gutter={16} style={{ marginBottom: 16 }}>
           <Col span={24}>
             <Row>
               <Col span={24}>
                 <Table
-                  dataSource={riskData}
-                  pagination={false}
+                  dataSource={riskData.riskItems}
                   rowKey="id"
+                  bordered
+                  pagination={false}
                   columns={[
                     {
                       title: '风险类型',
                       dataIndex: 'riskType',
                       key: 'riskType',
-                      align: 'center'
+                      width: 150,
+                      align: 'center',
+                      // 配置单元格合并和样式
+                      onCell: (_, index) => {
+                        const rowSpanArray = getRowSpanConfig(riskData.riskItems);
+                        // 确保index是有效数字再使用
+                        const rowSpan = typeof index === 'number' ? (rowSpanArray[index] || 0) : 0;
+                        
+                        return {
+                          rowSpan,
+                          style: rowSpan > 0 ? { verticalAlign: 'middle' } : { display: 'none' }
+                        };
+                      }
                     },
                     {
                       title: '风险项',
                       dataIndex: 'riskItem',
                       key: 'riskItem',
-                      align: 'center'
+                      width: 300,
+                      align: 'center',
                     },
                     {
                       title: '风险认定',
-                      dataIndex: 'riskStatus',
-                      key: 'riskStatus',
+                      key: 'isRisk',
+                      width: 100,
                       align: 'center',
-                      render: (status: boolean | undefined) => {
-                        if (status === undefined) return '-';
-                        return status ? '是' : '否';
-                      }
+                      render: (_: any, record: RiskItem) => (
+                        <span style={{ fontSize: '14px' }}>
+                          {record.riskStatus === 'yes' ? '是' : '否'}
+                        </span>
+                      )
                     },
                     {
                       title: '备注',
-                      dataIndex: 'remark',
                       key: 'remark',
+                      width: 300,
                       align: 'center',
-                      render: (remark?: string) => remark || '-'
-                    }
+                      render: (_: any, record: RiskItem) => (
+                        <span style={{ fontSize: '14px' }}>
+                          {record.remark || '-'}
+                        </span>
+                      ),
+                    },
                   ]}
-                  style={{ border: '1px solid #f0f0f0' }}
                 />
               </Col>
             </Row>
           </Col>
         </Row>
         
+        {/* 发布验证确认信息 */}
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={8} style={{ fontSize: '15px', marginTop: '8px' }}>
+            <strong style={{ fontSize: '15px' }}>发布验证确认</strong>
+          </Col>
+        </Row>
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={24}>
+            <Table
+              dataSource={verificationData}
+              rowKey="type"
+              bordered
+              pagination={false}
+              columns={[
+                {
+                  title: '类型',
+                  dataIndex: 'type',
+                  key: 'type',
+                  align: 'center',
+                },
+                {
+                  title: '已处理',
+                  dataIndex: 'processed',
+                  key: 'processed',
+                  align: 'center',
+                  render: (text: number) => <span style={{ color: '#1890ff' }}>{text}</span>
+                },
+                {
+                  title: '总数',
+                  dataIndex: 'total',
+                  key: 'total',
+                  align: 'center',
+                  render: (text: number) => <span style={{ color: '#1890ff' }}>{text}</span>
+                },
+                {
+                  title: '通过率',
+                  dataIndex: 'rate',
+                  key: 'rate',
+                  align: 'center',
+                  render: (text: string) => <span style={{ color: '#1890ff' }}>{text}</span>
+                },
+              ]}
+            />
+          </Col>
+        </Row>
+
         {/* 操作按钮行 */}
         <Row gutter={16} style={{ marginBottom: 16 }}>
           <Col span={24} style={{ textAlign: 'left' }}>
-            <Button type="primary" style={{ marginRight: '8px' }} onClick={handleConfirmSubmitWithValidation}>
-              提交
-            </Button>
+            <Popconfirm
+              title="确认提交"
+              onConfirm={handleConfirmSubmitWithValidation}
+              okText="确定"
+              cancelText="取消"
+              placement="topRight"
+              getPopupContainer={(triggerNode) => triggerNode.parentElement!}
+            >
+              <Button type="primary" style={{ marginRight: '8px' }}>
+                提交
+              </Button>
+            </Popconfirm>
             <Button onClick={handleReset}>
               重置
             </Button>

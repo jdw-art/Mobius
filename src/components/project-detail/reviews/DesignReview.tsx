@@ -215,7 +215,7 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
                     dayjs(tempData.plannedCompleteTime) : null}
                   onChange={handleDateChange}
                   placeholder="请选择日期"
-                  style={{ display: 'inline-block', width: '60%', marginLeft: 4 }}
+                  style={{ display: 'inline-block', width: 'calc(80% - 140px)' }}
                   format="YYYY-MM-DD"
                 />
                 {formErrors.plannedCompleteTime && (

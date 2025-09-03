@@ -616,6 +616,32 @@ export const getMockReleaseReviewData = (): ReleaseReviewInfo => {
   };
 };
 
+// 定义发布验证确认数据接口
+export interface ReleaseVerificationData {
+  type: string;
+  processed: number;
+  total: number;
+  rate: string;
+}
+
+// 模拟发布验证确认数据
+export const getMockReleaseVerificationData = (): ReleaseVerificationData[] => {
+  return [
+    {
+      type: '测试用例',
+      processed: 45,
+      total: 60,
+      rate: '75%'
+    },
+    {
+      type: '测试缺陷',
+      processed: 8,
+      total: 12,
+      rate: '66.7%'
+    }
+  ];
+};
+
 // 模拟操作日志数据
 export const getMockOperationLogs = (): OperationLog[] => {
   return [
