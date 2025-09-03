@@ -515,6 +515,7 @@ export const getMockUATEnvironmentTestCases = (): TestCase[] => {
 
 // 测试用例评审接口定义
 export interface TestCaseReviewInfo {
+  title: string;
   projectId: string;
   requirementId: string;
   creator: string;
@@ -540,6 +541,7 @@ export interface ReleaseReviewInfo {
 export const getMockTestCaseReviewData = (): TestCaseReviewInfo => {
   const testCases = getMockUATEnvironmentTestCases();
   return {
+    title: '用户管理系统测试用例评审',
     projectId: 'PRJ001',
     requirementId: 'REQ001',
     creator: '钱七',

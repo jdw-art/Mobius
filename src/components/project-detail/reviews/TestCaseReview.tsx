@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, DatePicker, Button, Popconfirm, message, Progress } from 'antd';
+import { Card, Row, Col, DatePicker, Button, Popconfirm, message, Progress, Input } from 'antd';
 import dayjs from 'dayjs';
 import { getMockTestCaseReviewData, getMockOperationLogs, getMockUATEnvironmentTestCases } from '../../../services/mockData';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
@@ -38,6 +38,10 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
   const validateForm = (): boolean => {
     const errors: Record<string, string> = {};
     
+    if (!tempData.title?.trim()) {
+      errors.title = '请输入标题';
+    }
+    
     if (!tempData.plannedCompleteTime) {
       errors.plannedCompleteTime = '请选择计划完成时间';
     }
@@ -71,6 +75,19 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
 
     setIsSubmitted(true);
     message.success('测试用例评审提交成功');
+  };
+
+  // 处理输入变化
+  const handleInputChange = (field: keyof Partial<TestCaseReviewInfo>, value: string) => {
+    setTempData(prev => ({ ...prev, [field]: value }));
+    // 清除对应字段的错误信息
+    if (formErrors[field]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[field];
+        return newErrors;
+      });
+    }
   };
 
   // 处理日期变化
@@ -128,7 +145,32 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
     <div>
       {/* 评审基本信息卡片 */}
       <Card className="review-card" style={{ marginBottom: 24 }}>
-        {/* 第一行：创建人、项目ID、需求ID */}
+        {/* 第一行：评审标题 */}
+        <Row gutter={16} style={{ marginBottom: 16 }}>
+          <Col span={24} style={{ fontSize: '15px' }}>
+            <strong style={{ fontSize: '15px' }}>标题：</strong>
+            {!isSubmitted && <span style={{ color: 'red', marginRight: 4 }}>*</span>}
+            {!isSubmitted ? (
+              <>
+                <Input
+                  value={tempData.title || ''}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('title', e.target.value)}
+                  placeholder="请输入评审标题"
+                  style={{ display: 'inline-block', width: 'calc(100% - 60px)', marginLeft: 4, fontSize: '15px' }}
+                />
+                {formErrors.title && (
+                  <div style={{ color: 'red', fontSize: '12px', marginTop: 4 }}>
+                    {formErrors.title}
+                  </div>
+                )}
+              </>
+            ) : (
+              <span style={{ fontSize: '15px' }}>{reviewInfo.title}</span>
+            )}
+          </Col>
+        </Row>
+        
+        {/* 第二行：创建人、项目ID、需求ID */}
         <Row gutter={16} style={{ marginBottom: 16 }}>
           <Col span={8} style={{ fontSize: '15px' }}>
             <strong style={{ fontSize: '15px' }}>创建人：</strong>
