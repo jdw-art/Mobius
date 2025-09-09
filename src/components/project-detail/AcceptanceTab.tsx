@@ -10,9 +10,9 @@ import {
   getAcceptanceUATEnvironmentSummary,
   getAcceptanceTestEnvironmentUntestedReason,
   getAcceptanceUATEnvironmentUntestedReason,
-  getAcceptanceOperationLogs,
   type TestCaseStats
 } from '../../services/acceptanceService';
+import { getOperationLogs } from '../../services/commonService';
 
 const { Option } = Select;
 
@@ -84,7 +84,7 @@ const AcceptanceTab: React.FC = () => {
     setTestCaseStats(stats);
     
     // 加载操作日志
-    setOperationLogs(getAcceptanceOperationLogs());
+    setOperationLogs(getOperationLogs());
   };
 
   // 环境切换时重新加载数据

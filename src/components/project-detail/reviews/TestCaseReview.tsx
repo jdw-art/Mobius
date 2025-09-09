@@ -1,12 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, DatePicker, Button, Popconfirm, message, Progress, Input } from 'antd';
 import dayjs from 'dayjs';
-import { getMockTestCaseReviewData, getMockOperationLogs, getMockUATEnvironmentTestCases } from '../../../services/mockData';
+import { getTestCaseReviewData } from '../../../services/reviewsService';
+import { getOperationLogs } from '../../../services/commonService';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
 import OperationLogList from '../../common/OperationLogList';
-import type { TestCaseReviewInfo, ReviewProcess } from '../../../services/mockData';
 import type { OperationLog } from '@/types';
 import type { Dayjs } from 'dayjs';
+
+// 定义需要的类型
+interface ReviewProcess {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewers: string[];
+  reviewTime: string;
+  comment?: string;
+  commentEditable: boolean;
+}
+
+interface TestCaseReviewInfo {
+  title: string;
+  projectId: string;
+  requirementId: string;
+  creator: string;
+  createTime: string;
+  plannedCompleteTime: string;
+  testCaseCount: number;
+  reviewProcesses: ReviewProcess[];
+}
 
 interface TestCaseReviewProps {
   // 可以根据需要添加props
@@ -14,7 +37,7 @@ interface TestCaseReviewProps {
 
 const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
   // 评审信息状态
-  const [reviewInfo, setReviewInfo] = useState<TestCaseReviewInfo>(getMockTestCaseReviewData());
+  const [reviewInfo, setReviewInfo] = useState<TestCaseReviewInfo>(getTestCaseReviewData());
   const [tempData, setTempData] = useState<Partial<TestCaseReviewInfo>>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -23,15 +46,15 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
 
   // 初始化数据
   useEffect(() => {
-    // 获取模拟测试用例评审数据
-    const mockTestCaseReviewData = getMockTestCaseReviewData();
-    setReviewInfo(mockTestCaseReviewData);
-    setTempData({ ...mockTestCaseReviewData });
-    setReviewProcesses(mockTestCaseReviewData.reviewProcesses);
+    // 获取测试用例评审数据
+    const testCaseReviewData = getTestCaseReviewData();
+    setReviewInfo(testCaseReviewData);
+    setTempData({ ...testCaseReviewData });
+    setReviewProcesses(testCaseReviewData.reviewProcesses);
     
     // 获取操作日志数据
-    const mockOperationLogs = getMockOperationLogs();
-    setOperationLogs(mockOperationLogs);
+    const operationLogsData = getOperationLogs();
+    setOperationLogs(operationLogsData);
   }, []);
 
   // 表单验证
@@ -68,7 +91,7 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
   // 提交修改
   const handleConfirmSubmit = () => {
     // 更新评审信息
-    setReviewInfo(prev => ({
+    setReviewInfo((prev: TestCaseReviewInfo) => ({
       ...prev,
       ...tempData
     }));
@@ -78,11 +101,11 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
   };
 
   // 处理输入变化
-  const handleInputChange = (field: keyof Partial<TestCaseReviewInfo>, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string) => {
+    setTempData((prev: Partial<TestCaseReviewInfo>) => ({ ...prev, [field]: value }));
     // 清除对应字段的错误信息
     if (formErrors[field]) {
-      setFormErrors(prev => {
+      setFormErrors((prev: Record<string, string>) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;
@@ -93,10 +116,10 @@ const TestCaseReview: React.FC<TestCaseReviewProps> = () => {
   // 处理日期变化
   const handleDateChange = (value: Dayjs | null) => {
     if (value) {
-      setTempData(prev => ({ ...prev, plannedCompleteTime: value.format('YYYY-MM-DD') }));
+      setTempData((prev: Partial<TestCaseReviewInfo>) => ({ ...prev, plannedCompleteTime: value.format('YYYY-MM-DD') }));
       // 清除对应字段的错误信息
       if (formErrors.plannedCompleteTime) {
-        setFormErrors(prev => {
+        setFormErrors((prev: Record<string, string>) => {
           const newErrors = { ...prev };
           delete newErrors.plannedCompleteTime;
           return newErrors;

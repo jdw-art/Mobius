@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Select, Input, Button, Space, Table, Popconfirm } from 'antd';
 import { SearchOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
-import { getMockTestEnvironmentTestCases, getMockUATEnvironmentTestCases } from '../../../services/mockData';
+import { getTestEnvironmentTestCases, getUATEnvironmentTestCases } from '../../../services/testingService';
 import { TestCase } from '../../../types';
 
 const { Option } = Select;
@@ -15,9 +15,9 @@ const TestPlan: React.FC = () => {
   // 根据环境加载测试用例数据
   const loadTestCases = (env: string) => {
     if (env === 'test') {
-      setTestCases(getMockTestEnvironmentTestCases());
+      setTestCases(getTestEnvironmentTestCases());
     } else if (env === 'uat') {
-      setTestCases(getMockUATEnvironmentTestCases());
+      setTestCases(getUATEnvironmentTestCases());
     } else {
       setTestCases([]);
     }
@@ -28,9 +28,9 @@ const TestPlan: React.FC = () => {
     console.log('搜索用例:', { environment, caseName });
     let filteredCases: TestCase[] = [];
     if (environment === 'test') {
-      filteredCases = getMockTestEnvironmentTestCases();
+      filteredCases = getTestEnvironmentTestCases();
     } else if (environment === 'uat') {
-      filteredCases = getMockUATEnvironmentTestCases();
+      filteredCases = getUATEnvironmentTestCases();
     }
 
     if (caseName.trim()) {

@@ -5,22 +5,18 @@ import type { TabsProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { ArrowRightOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import type { Application, EnvironmentType, BuildingProject, UnbuiltProject, OperationLog, BuildStatus, DeployStatus } from '../../types';
-import { 
-  getMockApplications, 
-  getMockEnvironmentBuildConfig, 
-  getMockBuildingProjects, 
-  getMockUnbuiltProjects, 
-  getMockOperationLogs 
-} from '../../services/mockData';
+import { getApplications } from '../../services/applicationsService';
+import { getEnvironmentBuildConfig, getBuildingProjects, getUnbuiltProjects } from '../../services/buildsService';
+import { getOperationLogs } from '../../services/commonService';
 
 const BuildsTab: React.FC = () => {
   // 状态管理
   const [activeTab, setActiveTab] = useState<EnvironmentType>('测试环境');
-  const [applications] = useState<Application[]>(getMockApplications());
-  const [buildConfig, setBuildConfig] = useState<any>(getMockEnvironmentBuildConfig('测试环境'));
-  const [buildingProjects] = useState<BuildingProject[]>(getMockBuildingProjects());
-  const [unbuiltProjects] = useState<UnbuiltProject[]>(getMockUnbuiltProjects());
-  const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
+  const [applications] = useState<Application[]>(getApplications());
+  const [buildConfig, setBuildConfig] = useState<any>(getEnvironmentBuildConfig('测试环境'));
+  const [buildingProjects] = useState<BuildingProject[]>(getBuildingProjects());
+  const [unbuiltProjects] = useState<UnbuiltProject[]>(getUnbuiltProjects());
+  const [operationLogs] = useState<OperationLog[]>(getOperationLogs());
   const [selectedAppId, setSelectedAppId] = useState<string>('APP001');
   // 分页配置 - 与概况动态部分保持一致
   const paginationConfig = {
@@ -33,7 +29,7 @@ const BuildsTab: React.FC = () => {
     const environment = key as EnvironmentType;
     setActiveTab(environment);
     // 获取对应环境的构建配置
-    setBuildConfig(getMockEnvironmentBuildConfig(environment));
+    setBuildConfig(getEnvironmentBuildConfig(environment));
   };
 
   // 处理应用选择变更

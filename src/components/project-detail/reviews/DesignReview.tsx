@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Typography, Button, Input, DatePicker, message, Popconfirm, Progress } from 'antd';
 import dayjs from 'dayjs';
-import { getMockDesignReviewData, ReviewProcess, getMockOperationLogs } from '@/services/mockData';
+import { getDesignReviewData } from '../../../services/reviewsService';
+import { getOperationLogs } from '../../../services/commonService';
 import OperationLogList from '../../common/OperationLogList';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
 import type { OperationLog } from '../../../types';
+
+// 定义需要的类型
+interface ReviewProcess {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewers: string[];
+  reviewTime: string;
+  comment?: string;
+  commentEditable: boolean;
+}
 
 const { Link } = Typography;
 const { TextArea } = Input;
@@ -27,7 +40,7 @@ interface DesignReviewProps {
 
 const DesignReview: React.FC<DesignReviewProps> = () => {
   // 获取设计评审数据
-  const initialReviewInfo = getMockDesignReviewData();
+  const initialReviewInfo = getDesignReviewData();
   const [reviewInfo, setReviewInfo] = useState<DesignReviewInfo>(initialReviewInfo);
   const [reviewProcesses, setReviewProcesses] = useState<ReviewProcess[]>(initialReviewInfo.reviewProcesses || []);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -37,7 +50,7 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
     designDocumentLink: initialReviewInfo.designDocumentLink
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
+  const [operationLogs] = useState<OperationLog[]>(getOperationLogs());
 
   // 重置表单
   const handleReset = () => {
@@ -81,7 +94,7 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
   // 提交修改
   const handleConfirmSubmit = () => {
     // 更新评审信息
-    setReviewInfo(prev => ({
+    setReviewInfo((prev: DesignReviewInfo) => ({
       ...prev,
       ...tempData,
       updateTime: new Date().toLocaleString('zh-CN', {
@@ -99,11 +112,11 @@ const DesignReview: React.FC<DesignReviewProps> = () => {
   };
 
   // 处理输入变化
-  const handleInputChange = (field: keyof Partial<DesignReviewInfo>, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string) => {
+    setTempData((prev: Partial<DesignReviewInfo>) => ({ ...prev, [field]: value }));
     // 清除对应字段的错误信息
     if (formErrors[field]) {
-      setFormErrors(prev => {
+      setFormErrors((prev: Record<string, string>) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;

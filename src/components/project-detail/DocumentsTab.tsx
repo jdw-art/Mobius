@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getMockDocuments } from '@/services/mockData';
+import { getDocuments } from '@/services/documentsService';
 import { TABLE_PAGINATION_CONFIG } from '@/constants';
 
 interface Document {
@@ -16,10 +16,10 @@ interface Document {
 const DocumentsTab: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
 
-  // 初始化模拟数据
+  // 初始化数据
   useEffect(() => {
-    const mockDocuments = getMockDocuments();
-    setDocuments(mockDocuments);
+    const documentsData = getDocuments();
+    setDocuments(documentsData);
   }, []);
 
   // 表格列配置

@@ -1,13 +1,25 @@
 import React, { useState } from 'react';
 import { Card, Row, Col, Typography, Button, Input, DatePicker, message, Popconfirm, Progress, Select } from 'antd';
 import dayjs from 'dayjs';
-import { getMockCodeReviewData, ReviewProcess, getMockOperationLogs } from '@/services/mockData';
+import { getCodeReviewData } from '../../../services/reviewsService';
+import { getOperationLogs } from '../../../services/commonService';
 import OperationLogList from '../../common/OperationLogList';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
 import type { OperationLog } from '../../../types';
 
 const { Link } = Typography;
 const { TextArea } = Input;
+
+export interface ReviewProcess {
+  id: string;
+  title: string;
+  description?: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  reviewers?: string[];
+  reviewTime?: string;
+  comment?: string;
+  commentEditable?: boolean;
+}
 
 export interface CodeReviewInfo {
   projectId: string;
@@ -26,13 +38,13 @@ interface CodeReviewProps {
 
 const CodeReview: React.FC<CodeReviewProps> = () => {
   // 获取代码评审数据
-  const initialReviewInfo = getMockCodeReviewData();
+  const initialReviewInfo = getCodeReviewData();
   const [reviewInfo, setReviewInfo] = useState<CodeReviewInfo>(initialReviewInfo);
   const [reviewProcesses, setReviewProcesses] = useState<ReviewProcess[]>(initialReviewInfo.reviewProcesses || []);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [tempData, setTempData] = useState<Partial<CodeReviewInfo>>({});
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
+  const [operationLogs] = useState<OperationLog[]>(getOperationLogs());
 
   // 重置表单
   const handleReset = () => {
@@ -66,7 +78,7 @@ const CodeReview: React.FC<CodeReviewProps> = () => {
   // 提交修改
   const handleConfirmSubmit = () => {
     // 更新评审信息
-    setReviewInfo(prev => ({
+    setReviewInfo((prev: CodeReviewInfo) => ({
       ...prev,
       ...tempData
     }));
@@ -76,11 +88,11 @@ const CodeReview: React.FC<CodeReviewProps> = () => {
   };
 
   // 处理输入变化
-  const handleInputChange = (field: keyof Partial<CodeReviewInfo>, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string) => {
+    setTempData((prev: Partial<CodeReviewInfo>) => ({ ...prev, [field]: value }));
     // 清除对应字段的错误信息
     if (formErrors[field]) {
-      setFormErrors(prev => {
+      setFormErrors((prev: Record<string, string>) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;

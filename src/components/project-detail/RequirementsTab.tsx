@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getMockRequirements } from '../../services/mockData';
+import { getRequirements } from '../../services/requirementsService';
 import type { Requirement } from '../../types';
 
 const RequirementsTab: React.FC = () => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
 
   useEffect(() => {
-    // 获取模拟需求数据
-    const mockRequirements = getMockRequirements();
-    setRequirements(mockRequirements);
+    // 获取需求数据
+    const requirementsData = getRequirements();
+    setRequirements(requirementsData);
   }, []);
 
   // 定义表格列配置

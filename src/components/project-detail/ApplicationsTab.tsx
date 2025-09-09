@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Select, Dropdown, Space, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, PlusOutlined, FileTextOutlined, CodeOutlined, ScanOutlined } from '@ant-design/icons';
-import { getMockApplications } from '../../services/mockData';
+import { getApplications } from '../../services/applicationsService';
 import type { Application } from '../../types';
 
 const ApplicationsTab: React.FC = () => {
@@ -26,7 +26,7 @@ const ApplicationsTab: React.FC = () => {
   // 过滤应用列表
   const filterApplications = () => {
     // 获取所有应用数据
-    const allApplications = getMockApplications();
+    const allApplications = getApplications();
     // 根据筛选条件过滤应用列表
     const filteredApplications = allApplications.filter(app => {
       // 部署方式筛选
@@ -62,9 +62,9 @@ const ApplicationsTab: React.FC = () => {
 
   // 重新添加useEffect获取初始数据
   useEffect(() => {
-    // 获取模拟应用数据
-    const mockApplications = getMockApplications();
-    setApplications(mockApplications);
+    // 获取应用数据
+    const applicationsData = getApplications();
+    setApplications(applicationsData);
   }, []);
 
   // 处理删除应用

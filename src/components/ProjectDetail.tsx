@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, Button, Tag } from 'antd';
 import { ClockCircleOutlined, EditOutlined, MoreOutlined, PauseCircleOutlined } from '@ant-design/icons';
-import { getMockProjectDetail } from '@/services/mockData';
+import { getProjectDetail } from '@/services/overviewService';
 import { statusUtils } from '@/utils';
 import { Project, RouteParams } from '@/types';
 import OverviewTab from './project-detail/OverviewTab';
@@ -25,7 +25,7 @@ const ProjectDetail: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      const data = getMockProjectDetail(id);
+      const data = getProjectDetail(id);
       setProjectData(data);
     }
   }, [id]);

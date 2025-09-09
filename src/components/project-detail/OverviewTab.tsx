@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Descriptions, Row, Col, Card, List, Progress } from 'antd';
-import { getWorkflowMilestones } from '@/services/mockData';
+import { getWorkflowMilestones } from '@/services/overviewService';
+import { getOperationLogs } from '@/services/commonService';
 import { statusUtils, dateUtils, calculationUtils } from '@/utils';
-import { Project } from '@/types';
+import { Project, OperationLog } from '@/types';
 
 interface OverviewTabProps {
   projectData: Project;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ projectData }) => {
+  const [operationLogs, setOperationLogs] = useState<OperationLog[]>([]);
+
+  useEffect(() => {
+    // 使用commonService中的getOperationLogs替换原有的projectData.activities
+    setOperationLogs(getOperationLogs());
+  }, []);
   // 将字符串进度转换为数字，用于进度条显示
   const getProgressNumber = (progressStr: string): number => {
     const progressMap: Record<string, number> = {
@@ -182,7 +189,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ projectData }) => {
         <div className="content-panel" style={{display:'flex',flexDirection:'column',height:'100%'}}>
           <div className="panel-title">动态</div>
           <List
-            dataSource={projectData.activities}
+            dataSource={operationLogs}
             pagination={{ pageSize: 7, showSizeChanger: false }}
             renderItem={(item) => (
               <div className="activity-item">

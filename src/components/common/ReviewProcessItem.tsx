@@ -1,7 +1,17 @@
 import React from 'react';
 import { Row, Col, Button, Input } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons';
-import type { ReviewProcess } from '@/services/mockData';
+
+export interface ReviewProcess {
+  id: string;
+  title: string;
+  description?: string;
+  status?: 'pending' | 'approved' | 'rejected';
+  reviewers?: string[];
+  reviewTime?: string;
+  comment?: string;
+  commentEditable?: boolean;
+}
 
 interface ReviewProcessItemProps {
   process: ReviewProcess;
@@ -45,9 +55,9 @@ const ReviewProcessItem: React.FC<ReviewProcessItemProps> = ({
 
       {/* 第二行：测试人员、时间、按钮 */}
       <Row gutter={8} style={{ marginBottom: 12, marginLeft: 24, alignItems: 'center' }}>
-        <Col style={{ fontSize: '13px', color: '#999' }}>
-          {process.reviewers.join('、')}
-        </Col>
+            <Col style={{ fontSize: '13px', color: '#999' }}>
+              {(process.reviewers || []).join('、')}
+            </Col>
         <Col style={{ fontSize: '13px', color: '#999' }}>
           {process.reviewTime}
         </Col>

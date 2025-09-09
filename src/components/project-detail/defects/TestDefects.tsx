@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Space, Table, Tag, Popconfirm } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { getMockDefects } from '@/services/mockData';
-import { Defect, TableColumn } from '@/types';
+import { getDefects } from '../../../services/defectsService';
+import { Defect, TableColumn } from '../../../types';
 
 const TestDefects: React.FC = () => {
   const [defectName, setDefectName] = useState<string>('');
@@ -12,9 +12,9 @@ const TestDefects: React.FC = () => {
 
   // 初始化加载缺陷数据
   useEffect(() => {
-    const mockDefects = getMockDefects();
-    setDefects(mockDefects);
-    setFilteredDefects(mockDefects);
+    const defectsData = getDefects();
+    setDefects(defectsData);
+    setFilteredDefects(defectsData);
   }, []);
 
   // 搜索缺陷

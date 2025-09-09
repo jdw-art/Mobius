@@ -1,11 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Typography, Button, DatePicker, message, Popconfirm, Progress, Table, Checkbox, Input, Form, Space } from 'antd';
 import dayjs from 'dayjs';
-import { getMockReleaseReviewData, getMockOperationLogs, getMockRiskData, getMockReleaseVerificationData } from '@/services/mockData';
+import { getReleaseReviewData, getReleaseVerificationData } from '../../../services/reviewsService';
+import { getOperationLogs } from '../../../services/commonService';
+import { getRiskData } from '../../../services/overviewService';
 import OperationLogList from '../../common/OperationLogList';
 import ReviewProcessItem from '../../common/ReviewProcessItem';
-import type { OperationLog, RiskData, RiskItem } from '@/types';
-import type { ReleaseReviewInfo, ReviewProcess, ReleaseVerificationData } from '@/services/mockData';
+import type { OperationLog, RiskData, RiskItem } from '../../../types';
+
+// 定义需要的类型
+interface ReviewProcess {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'approved' | 'rejected';
+  reviewers: string[];
+  reviewTime: string;
+  comment?: string;
+  commentEditable: boolean;
+}
+
+interface ReleaseReviewInfo {
+  projectId: string;
+  requirementId: string;
+  creator: string;
+  createTime: string;
+  preReleaseTime: string;
+  prodReleaseTime: string;
+  plannedCompleteTime: string;
+  reviewProcesses?: ReviewProcess[];
+}
+
+interface ReleaseVerificationData {
+  type: string;
+  processed: number;
+  total: number;
+  rate: string;
+}
 
 const { Link } = Typography;
 
@@ -15,26 +46,26 @@ interface ReleaseReviewProps {
 
 const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
   // 获取发布评审数据
-  const initialReviewInfo = getMockReleaseReviewData();
+  const initialReviewInfo = getReleaseReviewData();
   const [reviewInfo, setReviewInfo] = useState<ReleaseReviewInfo>(initialReviewInfo);
   const [reviewProcesses, setReviewProcesses] = useState<ReviewProcess[]>(initialReviewInfo.reviewProcesses || []);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [tempData, setTempData] = useState<Partial<ReleaseReviewInfo>>({});
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-  const [operationLogs] = useState<OperationLog[]>(getMockOperationLogs());
+  const [operationLogs] = useState<OperationLog[]>(getOperationLogs());
   const [riskData, setRiskData] = useState<RiskData>({ riskItems: [] });
   const [form] = Form.useForm();
   const [verificationData, setVerificationData] = useState<ReleaseVerificationData[]>([]);
 
-  // 获取模拟风险数据
+  // 获取风险数据
   useEffect(() => {
-    const data = getMockRiskData();
+    const data = getRiskData();
     setRiskData(data);
   }, []);
 
-  // 获取模拟发布验证数据
+  // 获取发布验证数据
   useEffect(() => {
-    const data = getMockReleaseVerificationData();
+    const data = getReleaseVerificationData();
     setVerificationData(data);
   }, []);
 
@@ -130,7 +161,7 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
   // 提交修改
   const handleConfirmSubmit = () => {
     // 更新评审信息
-    setReviewInfo(prev => ({
+    setReviewInfo((prev: ReleaseReviewInfo) => ({
       ...prev,
       ...tempData
     }));
@@ -140,11 +171,11 @@ const ReleaseReview: React.FC<ReleaseReviewProps> = () => {
   };
 
   // 处理输入变化
-  const handleInputChange = (field: keyof Partial<ReleaseReviewInfo>, value: string) => {
-    setTempData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (field: string, value: string) => {
+    setTempData((prev: Partial<ReleaseReviewInfo>) => ({ ...prev, [field]: value }));
     // 清除对应字段的错误信息
     if (formErrors[field]) {
-      setFormErrors(prev => {
+      setFormErrors((prev: Record<string, string>) => {
         const newErrors = { ...prev };
         delete newErrors[field];
         return newErrors;

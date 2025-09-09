@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Checkbox, Input, Form, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getMockRiskData } from '@/services/mockData';
+import { getRiskData } from '@/services/overviewService';
 import { RiskItem, RiskData } from '@/types';
 
 const RisksTab: React.FC = () => {
   const [riskData, setRiskData] = useState<RiskData>({ riskItems: [] });
   const [form] = Form.useForm();
 
-  // 获取模拟风险数据
+  // 获取风险数据
   useEffect(() => {
-    const data = getMockRiskData();
+    const data = getRiskData();
     setRiskData(data);
   }, []);
 
