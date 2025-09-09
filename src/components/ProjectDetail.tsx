@@ -6,7 +6,6 @@ import { getMockProjectDetail } from '@/services/mockData';
 import { statusUtils } from '@/utils';
 import { Project, RouteParams } from '@/types';
 import OverviewTab from './project-detail/OverviewTab';
-import TasksTab from './project-detail/TasksTab';
 import RequirementsTab from './project-detail/RequirementsTab';
 import ApplicationsTab from './project-detail/ApplicationsTab';
 import BuildsTab from './project-detail/BuildsTab';
@@ -59,9 +58,6 @@ const ProjectDetail: React.FC = () => {
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
           <TabPane tab="概况" key="overview">
             <OverviewTab projectData={projectData} />
-          </TabPane>
-          <TabPane tab="任务" key="tasks">
-            <TasksTab />
           </TabPane>
           <TabPane tab="需求" key="requirements">
             <RequirementsTab />
