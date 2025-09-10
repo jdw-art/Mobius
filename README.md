@@ -1,6 +1,6 @@
 # DevOps一体化平台
 
-一个基于React和TypeScript的DevOps一体化平台，提供项目管理、需求管理、缺陷跟踪、代码评审、构建部署等一站式DevOps解决方案，采用现代化的项目架构和最佳实践。
+一个基于React和TypeScript的DevOps一体化平台，提供项目管理、需求管理、缺陷跟踪、代码评审、构建部署等一站式DevOps解决方案，采用现代化的项目架构和最佳实践。该平台支持统一的操作日志管理，通过commonService集中提供操作日志数据。
 
 ## 🚀 技术栈
 
@@ -50,7 +50,16 @@ src/
 ├── hooks/              # 自定义Hooks
 │   └── useProjects.ts
 ├── services/           # 服务层
-│   └── mockData.ts
+│   ├── acceptanceService.ts  # 验收相关服务
+│   ├── applicationsService.ts  # 应用相关服务
+│   ├── buildsService.ts  # 构建相关服务
+│   ├── commonService.ts  # 通用服务（含统一操作日志）
+│   ├── defectsService.ts  # 缺陷相关服务
+│   ├── documentsService.ts  # 文档相关服务
+│   ├── overviewService.ts  # 概览相关服务
+│   ├── requirementsService.ts  # 需求相关服务
+│   ├── reviewsService.ts  # 评审相关服务
+│   └── testingService.ts  # 测试相关服务
 ├── assets/             # 静态资源
 │   ├── images/
 │   └── icons/
@@ -133,6 +142,12 @@ npm run type-check
 - 复杂状态逻辑封装为自定义Hook
 - 避免过度使用全局状态
 
+### 服务层规范
+- 所有业务数据通过对应的service文件获取
+- 操作日志统一通过commonService中的getOperationLogs获取
+- 避免在组件中直接使用硬编码的模拟数据
+- 服务函数返回类型化的数据
+
 ## 📝 代码示例
 
 ### 组件定义
@@ -168,6 +183,34 @@ export const useUser = () => {
   }, []);
   
   return { user, updateUser };
+};
+```
+
+### 使用统一操作日志
+```typescript
+import { useEffect, useState } from 'react';
+import { getOperationLogs } from '@/services/commonService';
+import { OperationLog } from '@/types';
+
+const MyComponent: React.FC = () => {
+  const [operationLogs, setOperationLogs] = useState<OperationLog[]>([]);
+  
+  useEffect(() => {
+    // 获取统一操作日志数据
+    setOperationLogs(getOperationLogs());
+  }, []);
+  
+  return (
+    <div>
+      {operationLogs.map((log) => (
+        <div key={log.time}>
+          <span>{log.time}</span>
+          <span>{log.user}</span>
+          <span>{log.action}</span>
+        </div>
+      ))}
+    </div>
+  );
 };
 ```
 
