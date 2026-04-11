@@ -5,24 +5,52 @@ import type { TabsProps } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { ArrowRightOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import type { Application, EnvironmentType, BuildingProject, UnbuiltProject, OperationLog, BuildStatus, DeployStatus } from '../../types';
-import { getApplications } from '../../services/applicationsService';
-import { getEnvironmentBuildConfig, getBuildingProjects, getUnbuiltProjects } from '../../services/buildsService';
+import { applicationsService } from '../../services/applicationsService';
+import { getEnvironmentBuildConfig, getBuildingProjects, getUnbuiltProjects, buildsService, Build } from '../../services/buildsService';
 import { getOperationLogs } from '../../services/commonService';
 
-const BuildsTab: React.FC = () => {
+interface BuildsTabProps {
+  projectId: string;
+}
+
+const BuildsTab: React.FC<BuildsTabProps> = ({ projectId }) => {
   // 状态管理
   const [activeTab, setActiveTab] = useState<EnvironmentType>('测试环境');
-  const [applications] = useState<Application[]>(getApplications());
+  const [applications, setApplications] = useState<Application[]>([]);
   const [buildConfig, setBuildConfig] = useState<any>(getEnvironmentBuildConfig('测试环境'));
   const [buildingProjects] = useState<BuildingProject[]>(getBuildingProjects());
   const [unbuiltProjects] = useState<UnbuiltProject[]>(getUnbuiltProjects());
   const [operationLogs] = useState<OperationLog[]>(getOperationLogs());
   const [selectedAppId, setSelectedAppId] = useState<string>('APP001');
+  const [builds, setBuilds] = useState<Build[]>([]);
+  const [loading, setLoading] = useState(true);
   // 分页配置 - 与概况动态部分保持一致
   const paginationConfig = {
     pageSize: 10, // 每页10条数据
     showSizeChanger: false
   };
+
+  // 加载应用和构建数据
+  useEffect(() => {
+    setLoading(true);
+    Promise.all([
+      applicationsService.getByProject(projectId),
+      buildsService.getByProject(projectId),
+    ])
+      .then(([apps, buildList]) => {
+        setApplications(apps);
+        setBuilds(buildList);
+        if (apps.length > 0) {
+          setSelectedAppId(apps[0].id);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load data:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 处理标签页切换
   const handleTabChange = (key: string) => {

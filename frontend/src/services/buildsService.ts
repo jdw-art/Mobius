@@ -1,4 +1,17 @@
+import { request } from '../utils/request';
 import { BuildingProject, UnbuiltProject, Environment, EnvironmentType } from '../types';
+
+// Build type from API
+export interface Build {
+  id: string;
+  projectId: string;
+  branch: string;
+  tester: string;
+  coverage: number;
+  canUpdateCoverage: boolean;
+  buildStatus: string;
+  deployStatus: string;
+}
 
 // 模拟构建环境数据
 export const getEnvironmentBuildConfig = (env: EnvironmentType): any => {
@@ -94,4 +107,17 @@ export const getCodeBranches = (): string[] => {
     'feature/performance-optimization',
     'bugfix/login-issue'
   ];
+};
+
+// Async API version
+export const buildsService = {
+  getByProject: async (projectId: string): Promise<Build[]> => {
+    try {
+      const response = await request.get(`/api/v1/projects/${projectId}/builds`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to fetch builds:', error);
+      return [];
+    }
+  },
 };

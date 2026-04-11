@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getRequirements } from '../../services/requirementsService';
+import { requirementsService } from '../../services/requirementsService';
 import type { Requirement } from '../../types';
 
-const RequirementsTab: React.FC = () => {
+interface RequirementsTabProps {
+  projectId: string;
+}
+
+const RequirementsTab: React.FC<RequirementsTabProps> = ({ projectId }) => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 获取需求数据
-    const requirementsData = getRequirements();
-    setRequirements(requirementsData);
-  }, []);
+    setLoading(true);
+    requirementsService.getByProject(projectId)
+      .then(setRequirements)
+      .catch((error) => {
+        console.error('Failed to load requirements:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 定义表格列配置
   const columns: ColumnsType<Requirement> = [
@@ -84,6 +95,7 @@ const RequirementsTab: React.FC = () => {
           pagination={false}
           size="middle"
           className="requirements-table"
+          loading={loading}
         />
       </div>
     </div>

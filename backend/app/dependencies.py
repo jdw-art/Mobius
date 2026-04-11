@@ -1,33 +1,15 @@
-from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
 
 from app.config import settings
+from app.utils.redis import get_redis
 
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 security = HTTPBearer()
-
-
-class TokenPayload(BaseModel):
-    sub: str
-    exp: datetime
-
-
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-
-
-def create_access_token(user_id: str, expires_delta: Optional[timedelta] = None) -> str:
-    expire = datetime.utcnow() + (expires_delta or timedelta(hours=settings.jwt_expire_hours))
-    payload = {"sub": user_id, "exp": expire}
-    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -42,19 +24,24 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> str:
     token = credentials.credentials
+    redis_client = await get_redis()
+
+    # Extract user_id from token (opaque token format: user_id:random_part)
+    import base64
     try:
-        payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
-        )
-        user_id: str = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Invalid token",
-            )
-        return user_id
-    except JWTError:
+        decoded = base64.urlsafe_b64decode(token.encode()).decode()
+        user_id = decoded.split(":")[0]
+    except Exception:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token has expired",
+            detail="Token is invalid",
         )
+
+    # Check if this token matches the one stored for this user
+    stored_token = await redis_client.get(f"auth:user:{user_id}")
+    if stored_token != token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired or is invalid",
+        )
+    return user_id

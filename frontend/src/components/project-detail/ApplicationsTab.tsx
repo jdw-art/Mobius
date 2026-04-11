@@ -2,19 +2,41 @@ import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Select, Dropdown, Space, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { SearchOutlined, PlusOutlined, FileTextOutlined, CodeOutlined, ScanOutlined } from '@ant-design/icons';
-import { getApplications } from '../../services/applicationsService';
+import { applicationsService } from '../../services/applicationsService';
 import type { Application } from '../../types';
 
-const ApplicationsTab: React.FC = () => {
+interface ApplicationsTabProps {
+  projectId: string;
+}
+
+const ApplicationsTab: React.FC<ApplicationsTabProps> = ({ projectId }) => {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [allApplications, setAllApplications] = useState<Application[]>([]);
   const [deployMethod, setDeployMethod] = useState<string>('');
   const [appName, setAppName] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // 加载应用数据
+  useEffect(() => {
+    setLoading(true);
+    applicationsService.getByProject(projectId)
+      .then((data) => {
+        setAllApplications(data);
+        setApplications(data);
+      })
+      .catch((error) => {
+        console.error('Failed to load applications:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 监听筛选条件变化，自动触发筛选
   useEffect(() => {
     filterApplications();
-  }, [deployMethod, appName]);
+  }, [deployMethod, appName, allApplications]);
 
   // 处理搜索
   const handleSearch = () => {
@@ -25,8 +47,6 @@ const ApplicationsTab: React.FC = () => {
 
   // 过滤应用列表
   const filterApplications = () => {
-    // 获取所有应用数据
-    const allApplications = getApplications();
     // 根据筛选条件过滤应用列表
     const filteredApplications = allApplications.filter(app => {
       // 部署方式筛选
@@ -59,13 +79,6 @@ const ApplicationsTab: React.FC = () => {
   const handleCodeReview = (app: Application) => {
     console.log('代码评审:', app.name);
   };
-
-  // 重新添加useEffect获取初始数据
-  useEffect(() => {
-    // 获取应用数据
-    const applicationsData = getApplications();
-    setApplications(applicationsData);
-  }, []);
 
   // 处理删除应用
   const handleDeleteApplication = () => {
@@ -291,6 +304,7 @@ const ApplicationsTab: React.FC = () => {
           size="middle"
           className="applications-table"
           rowSelection={rowSelection}
+          loading={loading}
         />
       </div>
     </div>

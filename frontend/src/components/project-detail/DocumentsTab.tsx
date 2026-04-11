@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getDocuments } from '@/services/documentsService';
+import { documentsService } from '@/services/documentsService';
 import { TABLE_PAGINATION_CONFIG } from '@/constants';
 
 interface Document {
@@ -13,14 +13,26 @@ interface Document {
   createTime: string;
 }
 
-const DocumentsTab: React.FC = () => {
+interface DocumentsTabProps {
+  projectId: string;
+}
+
+const DocumentsTab: React.FC<DocumentsTabProps> = ({ projectId }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // 初始化数据
   useEffect(() => {
-    const documentsData = getDocuments();
-    setDocuments(documentsData);
-  }, []);
+    setLoading(true);
+    documentsService.getByProject(projectId)
+      .then(setDocuments)
+      .catch((error) => {
+        console.error('Failed to load documents:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 表格列配置
   const columns: ColumnsType<Document> = [
@@ -98,6 +110,7 @@ const DocumentsTab: React.FC = () => {
         rowKey="id"
         pagination={false}
         scroll={{ x: 1000 }}
+        loading={loading}
       />
     </div>
   );

@@ -1,18 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Checkbox, Input, Form, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getRiskData } from '@/services/overviewService';
+import { request } from '@/utils/request';
 import { RiskItem, RiskData } from '@/types';
 
-const RisksTab: React.FC = () => {
+interface RisksTabProps {
+  projectId: string;
+}
+
+const RisksTab: React.FC<RisksTabProps> = ({ projectId }) => {
   const [riskData, setRiskData] = useState<RiskData>({ riskItems: [] });
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(true);
 
   // 获取风险数据
   useEffect(() => {
-    const data = getRiskData();
-    setRiskData(data);
-  }, []);
+    setLoading(true);
+    request.get(`/api/v1/projects/${projectId}/risks`)
+      .then((response) => {
+        const risks = response.data.map((item: any, index: number) => ({
+          id: item.id || `RSK${String(index + 1).padStart(3, '0')}`,
+          riskType: item.riskType,
+          riskItem: item.riskItem,
+          riskStatus: item.riskStatus,
+          remark: item.remark || '',
+        }));
+        setRiskData({ riskItems: risks });
+      })
+      .catch((error) => {
+        console.error('Failed to load risks:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 处理风险认定变更
   const handleRiskStatusChange = (id: string, status: 'yes' | 'no' | undefined) => {
@@ -154,6 +175,7 @@ const RisksTab: React.FC = () => {
           rowKey="id"
           bordered
           pagination={false}
+          loading={loading}
         />
       </div>
     </div>

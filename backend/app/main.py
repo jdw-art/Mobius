@@ -1,13 +1,28 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.api.v1.router import api_router
+from app.utils.redis import RedisClient
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: check Redis connection
+    redis_ok = await RedisClient.check_connection()
+    if not redis_ok:
+        raise RuntimeError("Redis connection failed. Please ensure Redis is running.")
+    yield
+    # Shutdown: close Redis connection
+    await RedisClient.close()
+
 
 app = FastAPI(
     title="Mobius Backend API",
     description="Mobius DevOps Platform Backend - Phase 1",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 # CORS middleware

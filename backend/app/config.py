@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     qdrant_api_key: str = ""
 
+    # Redis
+    redis_url: str = "redis://:jdw112233@127.0.0.1:6379/0"
+    redis_token_ttl: int = 43200
+
     @property
     def database_url(self) -> str:
         return f"mysql+aiomysql://{self.mysql_user}:{self.mysql_password}@{self.mysql_host}:{self.mysql_port}/{self.mysql_database}"

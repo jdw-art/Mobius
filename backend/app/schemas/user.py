@@ -24,3 +24,7 @@ class UserResponse(BaseModel):
 class UserCreate(BaseModel):
     username: str
     password: str
+
+
+class LogoutResponse(BaseModel):
+    message: str

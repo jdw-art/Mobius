@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, Button, Tag } from 'antd';
 import { ClockCircleOutlined, EditOutlined, MoreOutlined, PauseCircleOutlined } from '@ant-design/icons';
-import { getProjectDetail } from '@/services/overviewService';
+import { projectService, ProjectDetail as ProjectDetailType } from '@/services/projectService';
 import { statusUtils } from '@/utils';
 import { Project, RouteParams } from '@/types';
 import OverviewTab from './project-detail/OverviewTab';
@@ -17,24 +17,81 @@ import RisksTab from './project-detail/RisksTab';
 
 const { TabPane } = Tabs;
 
+// Transform API response to Project type
+const transformProjectDetail = (apiData: ProjectDetailType): Project => {
+  return {
+    id: apiData.id,
+    name: apiData.name,
+    type: apiData.type as Project['type'],
+    status: apiData.status as Project['status'],
+    createTime: apiData.createTime,
+    pm: apiData.pm,
+    progress: apiData.progress,
+    plannedDesignTime: apiData.plannedDesignTime || '',
+    plannedTestSubmitTime: apiData.plannedTestSubmitTime || '',
+    plannedTestCompleteTime: apiData.plannedTestCompleteTime || '',
+    plannedReleaseTime: apiData.plannedReleaseTime || '',
+    plannedDuration: apiData.plannedDuration || '',
+    plannedDelivery: apiData.plannedDelivery || '',
+    budget: apiData.budget || '',
+    changeType: apiData.changeType || '',
+    relatedProduct: apiData.relatedProduct || '',
+    appCount: apiData.appCount || 0,
+    projectDuration: apiData.projectDuration || 0,
+    taskCount: apiData.taskCount || { completed: 0, total: 0 },
+    defectCount: apiData.defectCount || { resolved: 0, total: 0 },
+    testCaseCount: apiData.testCaseCount || { executed: 0, total: 0 },
+    workflow: (apiData.workflowSteps || []).map((step: any) => ({
+      step: step.step,
+      name: step.name,
+      status: step.status,
+      time: step.time || '',
+    })),
+    activities: (apiData.activities || []).map((act: any) => ({
+      type: act.type,
+      time: act.time,
+      user: act.user,
+      action: act.action,
+    })),
+    team: (apiData.teamMembers || []).map((member: any) => ({
+      role: member.role,
+      name: member.name,
+      avatar: member.avatar || member.name[0],
+      empId: member.empId,
+    })),
+  };
+};
+
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<RouteParams>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [projectData, setProjectData] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
-      const data = getProjectDetail(id);
-      setProjectData(data);
+      setLoading(true);
+      projectService.getProject(id)
+        .then((data) => {
+          setProjectData(transformProjectDetail(data));
+        })
+        .catch((error) => {
+          console.error('Failed to load project:', error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [id]);
 
-  if (!projectData) {
+  if (loading) {
     return <div>加载中...</div>;
   }
 
-  
+  if (!projectData) {
+    return <div>项目不存在</div>;
+  }
 
   return (
       <div>
@@ -60,28 +117,28 @@ const ProjectDetail: React.FC = () => {
             <OverviewTab projectData={projectData} />
           </TabPane>
           <TabPane tab="需求" key="requirements">
-            <RequirementsTab />
+            <RequirementsTab projectId={id!} />
           </TabPane>
           <TabPane tab="应用" key="applications">
-            <ApplicationsTab />
+            <ApplicationsTab projectId={id!} />
           </TabPane>
           <TabPane tab="构建列表" key="builds">
-            <BuildsTab />
+            <BuildsTab projectId={id!} />
           </TabPane>
           <TabPane tab="产品验收" key="acceptance">
             <AcceptanceTab />
           </TabPane>
           <TabPane tab="测试缺陷" key="defects">
-            <DefectsTab />
+            <DefectsTab projectId={id!} />
           </TabPane>
           <TabPane tab="评审" key="review">
-            <ReviewTab />
+            <ReviewTab projectId={id!} />
           </TabPane>
           <TabPane tab="文档" key="documents">
-            <DocumentsTab />
+            <DocumentsTab projectId={id!} />
           </TabPane>
           <TabPane tab="风险" key="risks">
-            <RisksTab />
+            <RisksTab projectId={id!} />
           </TabPane>
         </Tabs>
       </div>

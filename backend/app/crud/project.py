@@ -20,6 +20,7 @@ async def get_project(db: AsyncSession, project_id: str) -> Optional[Project]:
             selectinload(Project.team_members),
             selectinload(Project.workflow_steps),
             selectinload(Project.activities),
+            selectinload(Project.defects),
         )
         .where(Project.id == project_id)
     )

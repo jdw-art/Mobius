@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs } from 'antd';
+import { request } from '@/utils/request';
 import DesignReview from './reviews/DesignReview';
 import CodeReview from './reviews/CodeReview';
 import TestCaseReview from './reviews/TestCaseReview';
@@ -7,16 +8,51 @@ import ReleaseReview from './reviews/ReleaseReview';
 
 const { TabPane } = Tabs;
 
-const ReviewTab: React.FC = () => {
+interface ReviewTabProps {
+  projectId: string;
+}
+
+export interface Review {
+  id: string;
+  projectId: string;
+  type: string;
+  requirementId: string;
+  title: string;
+  creator: string;
+  createTime: string;
+  plannedCompleteTime?: string;
+  codeBranch?: string;
+  preReleaseTime?: string;
+  prodReleaseTime?: string;
+}
+
+const ReviewTab: React.FC<ReviewTabProps> = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState('design');
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    request.get(`/api/v1/projects/${projectId}/reviews`)
+      .then((response) => {
+        setReviews(response.data);
+      })
+      .catch((error) => {
+        console.error('Failed to load reviews:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   return (
     <div className="review-page">
-      <Tabs 
-        activeKey={activeTab} 
-        onChange={setActiveTab} 
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
         size="middle"
         className="review-tabs"
+        tabBarExtraContent={loading ? '加载中...' : undefined}
       >
         <TabPane tab="设计评审" key="design">
           <DesignReview />

@@ -1,21 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Input, Button, Space, Table, Tag, Popconfirm } from 'antd';
 import { SearchOutlined, PlusOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { getDefects } from '../../../services/defectsService';
+import { defectsService } from '../../../services/defectsService';
 import { Defect, TableColumn } from '../../../types';
 
-const TestDefects: React.FC = () => {
+interface TestDefectsProps {
+  projectId: string;
+}
+
+const TestDefects: React.FC<TestDefectsProps> = ({ projectId }) => {
   const [defectName, setDefectName] = useState<string>('');
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [defects, setDefects] = useState<Defect[]>([]);
   const [filteredDefects, setFilteredDefects] = useState<Defect[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // 初始化加载缺陷数据
   useEffect(() => {
-    const defectsData = getDefects();
-    setDefects(defectsData);
-    setFilteredDefects(defectsData);
-  }, []);
+    setLoading(true);
+    defectsService.getByProject(projectId)
+      .then((data) => {
+        setDefects(data);
+        setFilteredDefects(data);
+      })
+      .catch((error) => {
+        console.error('Failed to load defects:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [projectId]);
 
   // 搜索缺陷
   const handleSearch = () => {
@@ -236,6 +250,7 @@ const TestDefects: React.FC = () => {
           rowKey="id"
           pagination={{ pageSize: 10 }}
           scroll={{ x: 1500 }}
+          loading={loading}
         />
       </div>
     </div>

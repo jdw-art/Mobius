@@ -1,28 +1,48 @@
-import { useState, useCallback } from 'react';
-import { MOCK_PROJECTS } from '@/constants';
+import { useState, useCallback, useEffect } from 'react';
+import { projectService, ProjectListItem } from '../services/projectService';
 import { filterUtils } from '@/utils';
 
 export const useProjects = () => {
-  const [projects] = useState(MOCK_PROJECTS);
+  const [projects, setProjects] = useState<ProjectListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchText, setSearchText] = useState('');
   const [filterType, setFilterType] = useState('all');
 
-  // 过滤后的项目列表
+  const fetchProjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await projectService.getProjects(1, 100);
+      setProjects(response.items || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load projects');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  // Filtered projects
   const filteredProjects = useCallback(() => {
     return filterUtils.filterProjects(projects, searchText, filterType);
   }, [projects, searchText, filterType]);
 
-  // 更新搜索文本
+  // Update search text
   const updateSearchText = useCallback((text: string) => {
     setSearchText(text);
   }, []);
 
-  // 更新过滤类型
+  // Update filter type
   const updateFilterType = useCallback((type: string) => {
     setFilterType(type);
   }, []);
 
-  // 重置过滤器
+  // Reset filters
   const resetFilters = useCallback(() => {
     setSearchText('');
     setFilterType('all');
@@ -30,10 +50,13 @@ export const useProjects = () => {
 
   return {
     projects: filteredProjects(),
+    loading,
+    error,
     searchText,
     filterType,
     updateSearchText,
     updateFilterType,
-    resetFilters
+    resetFilters,
+    refetch: fetchProjects,
   };
 };

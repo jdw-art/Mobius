@@ -5,14 +5,18 @@ import TestDefects from './defects/TestDefects';
 
 const { TabPane } = Tabs;
 
-const DefectsTab: React.FC = () => {
+interface DefectsTabProps {
+  projectId: string;
+}
+
+const DefectsTab: React.FC<DefectsTabProps> = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState('plan');
 
   return (
     <div className="defects-page">
-      <Tabs 
-        activeKey={activeTab} 
-        onChange={setActiveTab} 
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
         size="middle"
         className="defects-tabs"
       >
@@ -20,7 +24,7 @@ const DefectsTab: React.FC = () => {
           <TestPlan />
         </TabPane>
         <TabPane tab="测试缺陷" key="defects">
-          <TestDefects />
+          <TestDefects projectId={projectId} />
         </TabPane>
       </Tabs>
     </div>
