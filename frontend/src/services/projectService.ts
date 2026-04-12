@@ -84,6 +84,15 @@ export const projectService = {
     const response = await request.get('/api/v1/projects', {
       params: { page, page_size: pageSize },
     });
+    // Handle both paginated {items, total, page, page_size} and raw array responses
+    if (Array.isArray(response.data)) {
+      return {
+        items: response.data,
+        total: response.data.length,
+        page: 1,
+        page_size: response.data.length,
+      };
+    }
     return response.data;
   },
 

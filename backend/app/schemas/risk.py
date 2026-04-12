@@ -6,8 +6,8 @@ from pydantic import BaseModel
 class RiskBase(BaseModel):
     risk_type: str
     risk_item: str
-    risk_status: str = ""
-    remark: str = ""
+    risk_status: Optional[str] = None
+    remark: Optional[str] = None
 
 
 class RiskCreate(RiskBase):

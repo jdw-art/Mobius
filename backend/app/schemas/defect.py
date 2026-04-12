@@ -11,12 +11,11 @@ class DefectBase(BaseModel):
     tester: str
     status: str
     creator: str
-    application: str = ""
 
 
 class DefectCreate(DefectBase):
     project_id: str
-    application_id: str = ""
+    application_id: Optional[str] = None
 
 
 class DefectUpdate(BaseModel):
@@ -31,7 +30,6 @@ class DefectUpdate(BaseModel):
 class DefectResponse(DefectBase):
     id: str
     project_id: str
-    application_id: str = ""
-    create_time: datetime
+    create_time: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
